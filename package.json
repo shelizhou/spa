@@ -1,5 +1,5 @@
 {
-  "name": "span",
+  "name": "spa",
   "version": "1.0.0",
   "main": "file.js",
   "dependencies": {
@@ -19,7 +19,9 @@
     "imagemin-pngquant": "^4.2.0",
     "requirejs": "^2.1.15"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "http-proxy": "^1.12.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
