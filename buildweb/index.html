@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>构建平台</title>
+    <style>
+        * {margin: 0;padding:0;}
+        .m_buttons {text-align: center;}
+        .m_buttons .m_button {display: inline-block;margin:20px;}
+        .m_button { outline: none;width: 200px;height: 100px;text-align: center;    border-radius: 5px; border: 1px solid#ccc; cursor: pointer; background: #fff; color: #777; font-size: 17px; }
+        .m_button:hover {opacity: 0.8;}
+        .m_button:active {background: -webkit-linear-gradient(#E8E8E8, white);}
+        .m_input { width: 300px; height: 35px; font-size:15px; }
+
+        .m_tip {display: none;font-size: 28px; margin: 20px 0;text-align: center;color: #14ABC3;}
+
+    </style>
+</head>
+
+<body>
+
+    <div id="J__tip" class="m_tip"></div>
+    <div class="m_buttons">
+        <button class="m_button" data-ajax="opensrc">打开源码工程</button>
+        <button class="m_button" data-ajax="opendist">打开构建工程</button>
+    </div>
+
+    <div class="m_buttons">
+        <label><span>资源前缀(后面不用加/): </span><input id="J__gulptext" class="m_input" placeholder="默认是空" type="text" value=""></label>
+        <button class="m_button" data-ajax="gulp">一键构建工程</button>
+    </div>
+
+    <div class="m_buttons">
+        <button class="m_button">规范</button>
+    </div>
+    <div class="m_buttons">
+        <button class="m_button" data-ajax="exit">退出</button>
+    </div>
+
+    <script>
+        var ajax = function(parms, success){
+            var xhr = new XMLHttpRequest();
+            xhr.open("post", "/_buildweb", true);
+            xhr.send(formatParams(parms || {}));
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200 ) {
+                    success && success(JSON.parse(xhr.responseText));
+                } else {
+                    // alert("网络出错");
+                }
+            }
+        };
+        function formatParams(data) {
+            var arr = [],
+                type;
+            for (var name in data) {
+                arr.push(name + "=" + data[name]);
+            }
+            return arr.join("&");
+        }
+
+        var buttons = document.querySelectorAll(".m_button"),
+            tip = document.getElementById("J__tip"),
+            text = document.getElementById("J__gulptext");
+        for (var i = 0; i < buttons.length; i++) {
+            buttons[i].addEventListener("click", function(){
+                var ajaxtype = this.getAttribute('data-ajax');
+                if (!ajaxtype) return;
+                if (ajaxtype === "gulp") {
+                    tip.style.display = "block";
+                    tip.innerHTML = "构建中...."
+                }
+                ajax({ajaxtype:ajaxtype, text: text.value}, function(res){
+                    if (res.ajaxtype === "gulp" && res.success) {
+                        tip.innerHTML = "构建成功";
+                        tip.style.display = "none";
+                    } else if (res.ajaxtype === "exit") {
+                        window.close();
+                    }
+                });
+            }, false);
+        }
+
+    </script>
+
+</body>
+</html>

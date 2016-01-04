@@ -1,0 +1,64 @@
+@charset "UTF-8";
+@import "config.scss";
+@import "base.scss";
+@import "method.scss";
+@import "iconfont.scss";
+
+// loading
+.m_loading {
+    z-index: 499;text-align: center;
+    @include transalign(); border-radius:10px; padding:0.4rem 0.6rem;
+    background: rgba(71, 70, 70, 0.87);
+    $dotcolor : #fff;
+    .loading__img {
+      margin: 20px auto 0;
+      @include animation(rotate 2.5s forwards linear 0s infinite normal);
+      $size : 6px;
+      $ban1 : 20px;
+      $ban2 : 14px;
+      width: $size; height:$size;
+      border-radius: $size;
+      @include boxShadow(0 (-$ban1) 0 $size/3 $dotcolor,           /* top, 1px expand */
+                  $ban1 0px $dotcolor,                /* right */
+                  0 $ban1 $dotcolor,                  /* bottom */
+                  (-$ban1) 0 $dotcolor,                 /* left */
+
+                  (-$ban2) (-$ban2) 0 $size/6 $dotcolor,        /* left-top, 0.5px expand */
+                  $ban2 (-$ban2) 0 $size/2 $dotcolor,        /* right-top, 1.5px expand */
+                  $ban2 $ban2 $dotcolor,                 /* right-bottom */
+                  (-$ban2) $ban2 $dotcolor);                /* left-bottom */
+    }
+    .loading__mess {
+        margin-top: 35px;color: $dotcolor;
+    }
+    display:none;
+    &.on {
+        display:block;
+    }
+}
+
+@include keyframes(rotate) {
+  0% {
+    @include transform(rotate(0deg));
+  }
+  100% {
+    @include transform(rotate(360deg))
+  }
+}
+
+.wrap {position:absolute;top:0px;bottom:0px;left:0px;right:0px;overflow:hidden;}
+.page {
+    position:absolute;top:0px;bottom:0px;left:0px;right:0px;
+    .pageInner {
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0; @include overflowY();
+    }
+    @include transition(opacity 0.2s ease-in);
+    opacity: 0;
+    &.out {display: none;}
+    &.in {display: block;opacity: 1}
+}
+.test {
+    @include box-sizing();
+}
+
+.p_index .header {background-image: url(/static/img/avator.png)}

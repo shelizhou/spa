@@ -1,0 +1,53 @@
+<style>
+    .p_index {position:absolute;top:0px;bottom:0px;left:0px;right:0px;}
+    .m_box {display: box;display: -webkit-box;}
+    .m_box_v { display: box;display: -webkit-box;box-orient:vertical; -webkit-box-orient:vertical;}
+    .m_flex1 {-webkit-box-flex:1;box-flex:1;}
+
+    .header {background: #51ACD4;color: #fff;text-align: center;}
+    .list li {line-height: 90px;}
+    .list li:active {background: #fff;}
+    .list li:not(:last-child) {border-bottom: 1px solid red;}
+
+
+    .tab {text-align: center;margin:5px 0;}
+    .tab li {display: inline-block;padding:10px;    border: 1px solid #ccc;}
+    .tab li.on {background: #ccc;color: #fff;}
+
+    #box{display:box;width:400px;height:100px;margin:0;padding:0px;list-style:none;}
+    #box li{margin:0px;}
+    #box li:nth-child(1){box-flex:1;-webkit-box-flex:1;background: #ff0;}
+    #box li:nth-child(2){box-flex:1;-webkit-box-flex:1;background: #6D5C5C}
+
+</style>
+
+<div class="p_index ">
+    <div class="header"><div >头部</div></div>
+    <!-- <div><img src="" alt="" style="float:left;width:20px;height:30px;"><h4>内容内容内容内容内容内容内容内容</h4></div> -->
+    <!-- <ul id="box" class="m_box">
+        <li class=""></li>
+        <li class=""></li>
+    </ul> -->
+    <p >{{ message }}</p>
+    <i class="icon-search"></i>
+    <ul class="tab"><li class="on">tab1</li><li>tab2</li></ul>
+    <div class="J__list  m_over m_flex1" style="background-color: #ccc; color: #615A5A; ">
+        <div style="">
+            <ul id="J__list" class="J__list__inner list">
+                <li><a href="#test">#test</a></li>
+                <li>2</li>
+                <li>3</li>
+                <li>4</li>
+                <li>5</li>
+                <li>6</li>
+                <li>7</li>
+                <li>8</li>
+                <li>last</li>
+            </ul>
+        </div>
+    </div>
+
+    <img src="/static/img/dan.png" alt="">
+
+
+</div>

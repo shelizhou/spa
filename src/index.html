@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>spa</title>
+    <script type="text/javascript">
+        // 记录首屏幕时间
+        var START_TIME = new Date();
+
+        // 调试状态（构建后自动改为false）
+        var IS_DEGUG = true;
+    </script>
+    <!-- 处理viewport,rem -->
+    <script src="/js/head.js"></script>
+
+</head>
+<body>
+
+    <div id="J__wrap" class="wrap">
+        <!-- 页面容器 .page -->
+        <div id="J__pages" class=""></div>
+
+        <!-- loading -->
+        <div id="J__m_loading" class="m_loading on"><div class="loading__img"></div><div class="loading__mess"><span class="J__loadingmess">加载中</span><span class="dotloading"></span></div></div>
+
+    </div>
+
+    <script type="text/javascript">
+        // 本地资源加载器
+        ;(function(){
+            var head = document.querySelector('head'),
+                body = document.querySelector('body'),
+                // 判断是不是支持本地存储
+                isLocalStorageSupported = (function() {
+                    var testKey = 'test',
+                        storage = window.localStorage;
+                    try {
+                        storage.setItem(testKey, 'testValue');
+                        storage.removeItem(testKey);
+                        return true;
+                    } catch (error) {
+                        return false;
+                    }
+                })(),
+                // js排队插入
+                asyncJsFn = (function(){
+                    var fn = [],
+                        index = 0;
+
+                    var tirgger = function(i){
+                        if ( fn[index] && index === i) {
+                            fn[index]();
+                            index++;
+                            tirgger(index);
+                        }
+                    };
+                    return {
+                        add : function(i, cb){
+                            fn[i] = cb;
+                            tirgger(i);
+                        }
+                    }
+                })();
+
+            var Loader = function(json){
+                var ls = window.localStorage,
+                    me = this;
+
+                // 遍历文件
+                var eachFn = function(type) {
+                    if (!type || !json[type]) return;
+
+                    json[type].forEach(function(v, i){
+                        var pixname = "ls_"+ type +"file_", // 缓存key前缀,
+                            name = pixname + v.name,
+                            content = "",
+                            k = JSON.parse(ls.getItem(name)) || null;
+
+                        if (!IS_DEGUG && isLocalStorageSupported) {
+                            // 有缓存并且版本是一致的
+                            if (k && k.version === v.url) {
+                                me.setFile(type, "inline", k.content, null ,i);
+                            } else {
+                                me.loadFile(v.url, function(content){
+                                    ls.setItem(name, JSON.stringify({version:v.url, content:content}));
+                                    me.setFile(type, "inline", content, null, i);
+                                }, function(){
+                                    // me.setFile(type, "out", null, v.url, i);
+                                });
+                            }
+                        } else {
+                            // 不支持缓存ls ,或者在调试中
+                            me.loadFile(v.url, function(content){
+                                me.setFile(type, "inline", content, null, i);
+                            }, function(){
+                            });
+
+                        }
+                    });
+
+                };
+
+                eachFn("css");
+                eachFn("js");
+
+            };
+
+            // 下载文件
+            Loader.prototype.loadFile = function(url, success, error){
+                var xhr = new XMLHttpRequest();
+
+                xhr.open("get", url, true);
+                xhr.send(null);
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4) {
+                        if (xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
+                        // if (xhr.status >= 200 && xhr.status < 400) {
+                            (typeof success === "function") && success(xhr.responseText);
+                        } else {
+                            (typeof error === "function") && error();
+                        }
+                    }
+                }
+
+            };
+
+            // 设置文件
+            // filetype: css / js
+            // howtype : inline / out(使用out可能会出现加载依赖问题)
+            // content : 内容
+            // url : 地址
+            // index : 依赖顺序
+            Loader.prototype.setFile = function(filetype, howtype, content, url, index){
+                // console.log(filetype, howtype, null, url);
+                var el;
+                if (filetype === "css") {
+                    el = document.createElement("style");
+                } else if (filetype === "js") {
+                    el = document.createElement("script");
+                    el.setAttribute("type", "text/javascript");
+                }
+                if (howtype === "inline") {
+                    el.innerHTML = content;
+                } else if ( howtype === "out") {
+                    if (filetype === "css") {
+                        el = document.createElement("link");
+                        el.setAttribute("rel", "stylesheet");
+                        el.setAttribute("href", url);
+                    } else if ( filetype === "js") {
+                        el.setAttribute("src", url);
+                    }
+                }
+                if (filetype === "css") {
+                    head.appendChild(el);
+                } else if (filetype === "js") {
+                    asyncJsFn.add(index, function(){
+                        body.appendChild(el);
+                    });
+                }
+            };
+
+            var fileJson = {
+                js : [
+                    { name:"zepto", url:"/js/zepto/zepto.min.js" },
+                    { name:"require", url:"/js/require/require.js" },
+                    // 业务js
+                    { name: "main", url: "/main/index.js" }
+                ],
+                css : [
+                    // 框架样式(小文件)
+                    { name: "frameset", url: "/static/frameset.css", },
+                    // 业务样式
+                    { name: "main", url: "/static/main.css", }
+                ]
+            };
+            var Load = new Loader(fileJson);
+        })();
+    </script>
+
+</body>
+</html>

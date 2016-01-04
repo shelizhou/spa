@@ -1,0 +1,289 @@
+@charset "utf-8";
+
+//
+@mixin box-sizing ($sizing:border-box) {
+    -webkit-box-sizing: $sizing;
+    box-sizing: $sizing;
+    @if $moz {
+        -moz-box-sizing: $sizing;
+    }
+    @if $opera {
+        -o-box-sizing: $sizing;
+    }
+}
+
+// -webkit-flex-dircetion: row | row-reverse | column | column-reverse
+// vertical
+@mixin flex-box ($orient:horizontal) {
+    display: box;
+    display: -webkit-box;
+    display: flex;
+    box-orient: $orient;
+    -webkit-box-orient: $orient;
+    @if $moz { 
+        display: -moz-box;
+        -moz-box-orient: $orient;
+    }
+    @if $opera {
+    }
+}
+@mixin flex ($num: 1) {
+    box-flex: $num;
+    -webkit-box-flex: $num;
+
+    @if $moz {
+        -moz-box-flex: $num;
+    }
+    @if $opera {
+    }
+}
+
+// 示例 @include boxShadow(0 0 0 0 #000, 0 0 0 0 #fff);
+@mixin boxShadow($arguments...) {
+    box-shadow: $arguments;
+    -webkit-box-shadow: $arguments;
+    @if $moz {
+        -moz-box-shadow: $arguments;
+    }
+    @if $opera {
+    }
+}
+@mixin textShadow($arguments...) {
+    text-shadow: $arguments;
+    -webkit-text-shadow: $arguments;
+    @if $moz {
+        -moz-text-shadow: $arguments;
+    }
+    @if $opera {
+    }
+}
+
+// 渐变 top #fff #000
+// 示例 @include linearBGGradient(top, #fff, #000);
+@mixin linearBGGradient($dir:top, $startC:#fff, $stopC:#000) {
+    background-image: -webkit-linear-gradient($dir, $startC, $stopC);
+    @if $moz {
+        background-image: -moz-linear-gradient($dir, $startC, $stopC);
+    }
+    @if $opera {
+        background-image: -o-linear-gradient($dir, $startC, $stopC);
+    }
+}
+@mixin radialBGGradient($startC:#fff, $stopC:#000) {
+    background-image: -webkit-radial-gradient($startC, $stopC);
+}
+
+// 过度 $name:all, $duration:0.5s, $function:linear, $delay:0
+// 示例 @include transition(all 0.5s ease-in);
+@mixin transition($arguments...) {
+    transition: $arguments;
+    -webkit-transition: $arguments;
+    @if $moz {
+        -moz-transition: $arguments;
+    }
+    @if $opera {
+        -o-transition: $arguments;
+    }
+}
+
+// 过滤 blur(2px) grayscale(1) sepia(1) saturate(0.5) invert(1) hue-rotate(90deg) drop-shad(3px 2px 2px #ccc)
+// 示例 @include transition(blur(2px));
+@mixin filter($arguments...) {
+    -webkit-filter: $arguments;
+    @if $moz {
+        -moz-filter: $arguments;
+    }
+    @if $opera {
+        -o-filter: $arguments;
+    }
+    filter:$arguments;
+}
+
+// border-image
+// 示例 @include border-image(url(../.png) 10);
+@mixin border-image ($arguments) {
+    border-image: $arguments;
+    -webkit-border-image: $arguments;
+}
+
+// 变形
+// 示例 @include transform(translate(100px,200px));
+@mixin transform($value) {
+    transform: $value;
+    -webkit-transform: $value;
+    @if $moz {
+        -moz-transform: $value;
+    }
+    @if $opera {
+        -o-transform: $value;
+    }
+}
+@mixin transformPerspective($value) {
+    -webkit-perspective: $value;
+}
+@mixin transformOrigin($value) {
+    transform-origin: $value;
+    -webkit-transform-origin: $value;
+}
+
+// 动画 $name:animationName, $duration:0.5s,$mode:forwards, $function:linear, $delay:0, $count:1, $direction:normal
+// mode : forwards none
+// count: infinite number
+// function: ease | linear | ease-in | ease-out | ease-in-out | cubic-bezier(<number>, <number>, <number>, <number>)
+// direction: normal | reverse | alternate(正反向交替) | alternate-reverse
+// 参数 $name:animationName, $duration:0.5s,$mode:forwards, $function:linear, $delay:0, $count:1, $direction:normal
+// 示例 @include animation(animationName 0.5s forwards ease-in 0 1 normal);
+@mixin animation($arguments) {
+    animation: $arguments;
+    -webkit-animation: $arguments;
+    @if $moz {
+        -webkit-animation: $arguments;
+    }
+    @if $opera {
+    }
+}
+@mixin animationDelay($value:0) {
+    -webkit-animation-delay: $value;
+    @if $moz {
+        -moz-animation-delay: $value;
+    }
+    @if $opera {
+        -o-animation-delay: $value;
+    }
+    animation-delay: $value;
+}
+@mixin animationFunction($value:ease-in) {
+    -webkit-animation-timing-function: $value;
+    @if $moz {
+        -moz-animation-timing-function: $value;
+    }
+    @if $opera {
+        -o-animation-timing-function: $value;
+    }
+    animation-timing-function: $value;
+}
+
+// 动画针 keyframes mixin
+// 示例
+// @include keyframes(animationName) {
+//   0% {
+//     background-color: #ffccf2;
+//   }
+//   50% {
+//     background-color: #ccffcc;
+//   }
+//   100% {
+//     background-color: #ccffff;
+//   }
+// }
+@mixin keyframes($name) {
+    @-webkit-keyframes #{$name} {
+        @content;
+    }
+    @if $moz {
+        @-moz-keyframes #{$name} {
+            @content;
+        }
+    }
+    @if $opera {
+        @-o-keyframes #{$name} {
+          @content;
+        }
+    }
+    @keyframes #{$name} {
+        @content;
+    }
+}
+
+// 水平垂直居中 作用在父元素，父元素要有高宽度
+@mixin boxalign($direction: both) {
+    @if $direction == both {
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+    }
+    @else if $direction == x {
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+    }
+    @else if $direction == y {
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+    }
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+}
+
+// 水平垂直居中
+@mixin transalign($direction: both) {
+    position: absolute;
+    @if $direction == both {
+        top: 50%;
+        left: 50%;
+        @include transform(translate(-50%,-50%));
+    }
+    @else if $direction == x {
+        left: 50%;
+        @include transform(translate(-50%,0%));
+    }
+    @else if $direction == y {
+        top: 50%;
+        @include transform(translate(0%,-50%));
+    }
+}
+
+// 消除 transition 闪屏
+@mixin disapearShang() {
+    /*设置内嵌的元素在 3D 空间如何呈现：保留 3D*/
+    -webkit-transform-style: preserve-3d;
+    /*（设置进行转换的元素的背面在面对用户时是否可见：隐藏）*/
+    -webkit-backface-visibility: hidden;
+}
+@mixin notSelect() {
+    -webkit-user-select: none;
+    @if $moz {
+        -moz-user-select: none;
+    }
+    @if $opera {
+        -o-user-select: none;
+    }
+    user-select: none;
+}
+@mixin overflowY() {
+    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+@mixin textOverflow() {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    @if $opera {
+        -o-text-overflow: ellipsis;
+    }
+}
+@mixin textOverflowLine($num: 2) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: $num;
+    -webkit-box-orient: vertical;
+}
+@mixin inputStyle() {
+    -webkit-user-modify: read-write-plaintext-only;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    background: rgba(0,0,0,0);
+    outline-style: none;
+}
