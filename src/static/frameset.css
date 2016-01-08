@@ -28,7 +28,7 @@ h1, h2, h3, h4, h5, h6 {
 input, select, textarea {
   font-size: inherit; }
 
-/*通用模块*/
+/*特别通用模块*/
 .clearfix:after {
   content: ".";
   display: block;
@@ -152,10 +152,3 @@ input, select, textarea {
   .page.in {
     display: block;
     opacity: 1; }
-
-.test {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box; }
-
-.p_index .header {
-  background-image: url(/static/img/avator.png); }

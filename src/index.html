@@ -90,11 +90,15 @@
                             }
                         } else {
                             // 不支持缓存ls ,或者在调试中
-                            me.loadFile(v.url, function(content){
-                                me.setFile(type, "inline", content, null, i);
-                            }, function(){
-                            });
-
+                            if (type === "css") {
+                                // 为了css方便调试
+                                me.setFile(type, "out", null, v.url, i);
+                            } else {
+                                me.loadFile(v.url, function(content){
+                                    me.setFile(type, "inline", content, null, i);
+                                }, function(){
+                                });
+                            }
                         }
                     });
 
@@ -162,8 +166,10 @@
 
             var fileJson = {
                 js : [
-                    { name:"zepto", url:"/js/zepto/zepto.min.js" },
-                    { name:"require", url:"/js/require/require.js" },
+                    // { name:"zepto", url:"/js/zepto/zepto.min.js" },
+                    // { name:"require", url:"/js/require/require.js" },
+
+                    { name:"combine", url:"/js/combine.js" },
                     // 业务js
                     { name: "main", url: "/main/index.js" }
                 ],

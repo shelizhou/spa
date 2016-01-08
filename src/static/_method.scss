@@ -1,6 +1,15 @@
 @charset "utf-8";
 
-//
+// px转换成rem
+@function rem($num:$pageWidth) {
+    $num : strip-units($num);
+    @return ($num / $pageWidth * 10 ) + rem;
+}
+// 去掉一个值的单位
+@function strip-units($number){
+    @return $number / ($number * 0 + 1);
+}
+
 @mixin box-sizing ($sizing:border-box) {
     -webkit-box-sizing: $sizing;
     box-sizing: $sizing;
@@ -13,14 +22,19 @@
 }
 
 // -webkit-flex-dircetion: row | row-reverse | column | column-reverse
-// vertical
-@mixin flex-box ($orient:horizontal) {
+// horizontal  vertical
+@mixin box ($o:h) {
     display: box;
     display: -webkit-box;
-    display: flex;
+    @if $o == v {
+        $orient : vertical;
+    }
+    @else {
+        $orient : horizontal;
+    }
     box-orient: $orient;
     -webkit-box-orient: $orient;
-    @if $moz { 
+    @if $moz {
         display: -moz-box;
         -moz-box-orient: $orient;
     }
@@ -131,8 +145,8 @@
 // count: infinite number
 // function: ease | linear | ease-in | ease-out | ease-in-out | cubic-bezier(<number>, <number>, <number>, <number>)
 // direction: normal | reverse | alternate(正反向交替) | alternate-reverse
-// 参数 $name:animationName, $duration:0.5s,$mode:forwards, $function:linear, $delay:0, $count:1, $direction:normal
-// 示例 @include animation(animationName 0.5s forwards ease-in 0 1 normal);
+// 参数 $name:animationName, $duration:0.5s,$mode:forwards, $function:linear, $delay:0s, $count:1, $direction:normal
+// 示例 @include animation(animationName 0.5s forwards ease-in 0s 1 normal);
 @mixin animation($arguments) {
     animation: $arguments;
     -webkit-animation: $arguments;

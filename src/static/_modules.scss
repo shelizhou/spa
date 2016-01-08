@@ -1,5 +1,12 @@
 @charset "utf-8";
 
+// 常用布局模块
+.m_box {@include box();}
+.m_box_v { @include box(v);}
+.m_flex1 { @include flex();}
+.m_over { @include overflowY();}
+.m_text { @include textOverflow();}
+
 
 .m_tooltips {
   color: #E4E4E4; position: absolute; top: 20px; left: 0; right:0; z-index: 499;
@@ -54,7 +61,7 @@
           &.select_more {
             background: url(img/all.png) right -2019px no-repeat;
             &:active {background-color:rgba(0,0,0,0.07);}
-            dt {@include flex-box();  padding: 20px 0;}
+            dt {@include box();  padding: 20px 0;}
             .tit {}
             .con {@include flex(1); text-align:right;padding-right:68px; }
           }
@@ -89,7 +96,7 @@
         }
       }
       .window_footer {
-        @include flex-box();
+        @include box();
       }
 
       .window_Btn {
@@ -118,7 +125,7 @@
         }
         .window_header {text-align: center;background: #f1f2f4;}
         .window_footer {
-          @include flex-box(vertical);
+          @include box(v);
         }
         .window_Btn {
           border-bottom: 1px solid #b2b2b2;

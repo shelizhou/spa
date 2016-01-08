@@ -1,7 +1,7 @@
 @charset "UTF-8";
 @import "config.scss";
-@import "base.scss";
 @import "method.scss";
+@import "base.scss";
 @import "iconfont.scss";
 
 // loading
@@ -57,8 +57,3 @@
     &.out {display: none;}
     &.in {display: block;opacity: 1}
 }
-.test {
-    @include box-sizing();
-}
-
-.p_index .header {background-image: url(/static/img/avator.png)}

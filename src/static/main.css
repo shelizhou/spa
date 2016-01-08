@@ -1,4 +1,31 @@
 @charset "UTF-8";
+.m_box {
+  display: box;
+  display: -webkit-box;
+  box-orient: horizontal;
+  -webkit-box-orient: horizontal; }
+
+.m_box_v {
+  display: box;
+  display: -webkit-box;
+  box-orient: vertical;
+  -webkit-box-orient: vertical; }
+
+.m_flex1 {
+  box-flex: 1;
+  -webkit-box-flex: 1; }
+
+.m_over {
+  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; }
+
+.m_text {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap; }
+
 .m_tooltips {
   color: #E4E4E4;
   position: absolute;
@@ -100,7 +127,6 @@
         .m_boundingBox .window_boundingBox__list dl.select_more dt {
           display: box;
           display: -webkit-box;
-          display: flex;
           box-orient: horizontal;
           -webkit-box-orient: horizontal;
           padding: 20px 0; }
@@ -149,7 +175,6 @@
   .m_boundingBox .window_footer {
     display: box;
     display: -webkit-box;
-    display: flex;
     box-orient: horizontal;
     -webkit-box-orient: horizontal; }
   .m_boundingBox .window_Btn {
@@ -193,7 +218,6 @@
     .m_boundingBox.down .window_footer {
       display: box;
       display: -webkit-box;
-      display: flex;
       box-orient: vertical;
       -webkit-box-orient: vertical; }
     .m_boundingBox.down .window_Btn {
@@ -225,3 +249,38 @@
   overflow: hidden; }
   .m_mask.on {
     display: block; }
+
+/**
+ * 该模块说明..
+ */
+.p_index {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px; }
+  .p_index .header {
+    background: #51ACD4;
+    color: #fff;
+    text-align: center; }
+  .p_index .header {
+    background-image: url(/static/img/avator.png); }
+  .p_index .list li {
+    line-height: 90px;
+    width: 6.66667rem;
+    background-color: #ccc;
+    color: #615A5A; }
+  .p_index .list li:active {
+    background: #fff; }
+  .p_index .list li:not(:last-child) {
+    border-bottom: 1px solid #fff; }
+  .p_index .tab {
+    text-align: center;
+    margin: 5px 0; }
+  .p_index .tab li {
+    display: inline-block;
+    padding: 10px;
+    border: 1px solid #ccc; }
+  .p_index .tab li.on {
+    background: #ccc;
+    color: #fff; }

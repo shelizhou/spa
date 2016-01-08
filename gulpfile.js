@@ -20,6 +20,7 @@ var pngquant = require('imagemin-pngquant');
 var minifyCss = require('gulp-minify-css');
 
 // 合并
+var concat = require('gulp-concat');
 var htmlInline = require('gulp-html-inline');
 var useref = require('gulp-useref');
 
@@ -48,6 +49,13 @@ gulp.task('clean', function () {
         .pipe(clean({force: true}));
 });
 
+// 合并
+gulp.task('concat', function() {
+    return gulp.src( ["./src/js/zepto/zepto.min.js", "./src/js/require/require.js"] )
+        .pipe(concat("combine.js"))
+        .pipe(uglify())
+        .pipe(gulp.dest("./src/js"));
+});
 // 构建rjs
 gulp.task('copymain', ['clean'], function() {
     return gulp.src( ["./src/main/**/*"] )
@@ -89,7 +97,7 @@ gulp.task('main-rjs-rev', ['rjs'], function() {
 
 
 // 生成md5
-gulp.task('get-all-rev', ['clean', 'main-rjs-rev'], function() {
+gulp.task('get-all-rev', ['clean', 'main-rjs-rev', 'concat'], function() {
 
     var imgOption = {
         progressive: true,
@@ -173,7 +181,7 @@ gulp.task('sass', function () {
     .pipe(gulp.dest('./src/static'));
 });
 gulp.task('sass:watch', function () {
-  gulp.watch('./src/static/*.scss', ['sass']);
+  gulp.watch('./src/static/**/*.scss', ['sass']);
 });
 
 exports.setPrefix = function(name){

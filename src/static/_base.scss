@@ -19,7 +19,7 @@ h1,h2,h3,h4,h5,h6{font-weight:normal;}
 input,select,textarea{ font-size: inherit;}
 
 
-/*通用模块*/
+/*特别通用模块*/
 .clearfix:after{content:"."; display:block; clear:both; visibility:hidden; height:0;font-size: 0;}
 .none {display: none !important;}
 .hidden { visibility: hidden !important;}

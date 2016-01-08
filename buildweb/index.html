@@ -31,7 +31,9 @@
     </div>
 
     <div class="m_buttons">
-        <button class="m_button">规范</button>
+        <button class="m_button" data-target='file.md'>文件规范</button>
+        <button class="m_button" data-target='static.md'>样式规范</button>
+        <button class="m_button" data-target='js.md'>js规范</button>
     </div>
     <div class="m_buttons">
         <button class="m_button" data-ajax="exit">退出</button>
@@ -65,6 +67,10 @@
         for (var i = 0; i < buttons.length; i++) {
             buttons[i].addEventListener("click", function(){
                 var ajaxtype = this.getAttribute('data-ajax');
+                var datatarget = this.getAttribute('data-target');
+                if (datatarget) {
+                    window.location.href = datatarget;
+                }
                 if (!ajaxtype) return;
                 if (ajaxtype === "gulp") {
                     tip.style.display = "block";

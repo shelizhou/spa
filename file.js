@@ -3,8 +3,10 @@ var FS = require("fs"),
     URL = require("url"),
     HTTP = require("http"),
     PATH = require("path"),
+    MARKDOWN = require("markdown").markdown,
     HTTPPROXY = require('http-proxy');
     // ZLIB = require('zlib');
+
 
 var proxy = HTTPPROXY.createProxyServer({});
 
@@ -27,6 +29,7 @@ exports.init = function(serverport, filename){
         // 文件请求
         if (req.url != '/_buildweb' && req.url.indexOf('/_ajax') === -1 ) {
             FS.exists(pathname, function(exists) {
+                var isMarkdown = false;
                 if (exists) {
                     switch (PATH.extname(pathname)) {
                         case ".html":
@@ -64,6 +67,12 @@ exports.init = function(serverport, filename){
                                 "Content-Type": "image/png"
                             });
                             break;
+                        case ".md":
+                            isMarkdown = true;
+                            res.writeHead(200, {
+                                "Content-Type": "text/html"
+                            });
+                            break;
                         default:
                             res.writeHead(200, {
                                 "Content-Type": "application/octet-stream"
@@ -71,7 +80,18 @@ exports.init = function(serverport, filename){
                     }
 
                     FS.readFile(pathname, function(err, data) {
-                        res.end(data);
+                        // var str = "";
+                        str = "<link rel='stylesheet' href='md/css.css'> <script src='md/js.js'></script>";
+                        if (isMarkdown) {
+                            try {
+                                res.end( MARKDOWN.toHTML(data.toString()) + str);
+                            } catch (e) {
+                                console.log(e);
+                                res.end(data);
+                            }
+                        } else {
+                            res.end(data);
+                        }
                     });
                 } else {
                     res.writeHead(404, {

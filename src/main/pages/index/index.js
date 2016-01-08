@@ -4,7 +4,6 @@ define([ 'config', 'method', 'defer', 'vue', 'template', 'used', 'dialog'],
 
 
     // 调试
-    // console.log(1,2,3);
     // console.log(document)
     // console.dir(document)
     // console.table([{a:1,b:2}, {a:3,b:4}])
@@ -56,14 +55,14 @@ define([ 'config', 'method', 'defer', 'vue', 'template', 'used', 'dialog'],
                 }
             });
 
-            $.ajax({
-                type:"post",
-                url:"_ajax/pdTag/getTags.do",
-                dataType:"json",
-                success:function(json){
-                    console.log(json);
-                }
-            })
+            // $.ajax({
+            //     type:"post",
+            //     url:"_ajax/pdTag/getTags.do",
+            //     dataType:"json",
+            //     success:function(json){
+            //         console.log(json);
+            //     }
+            // })
         },
         active : function($p, parms){
 
