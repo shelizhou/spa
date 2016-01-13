@@ -1,12 +1,12 @@
 /*
-* @name: 公共方法
-* @overview: 
+* @name: 公共配置
+* @overview:
 * @required: null
 * @return: obj [description]
 * @author: she
 */
 
-define([ ], 
+define([ ],
     function (  ) {
     "use strict";
 
@@ -14,13 +14,15 @@ define([ ],
 
     result.isDebug = true;
 
-    result.defaultHash = "index"; 
+    // 配置页面
+    result.defaultHash = "index";
     result.hashConfig = {
-        "index" : { title:""},
-        "test" : {title:""}
+        "index" : { isMenu: "index" },
+        "category" : { isMenu: "category" },
+        "me" : { isMenu: "me" },
+        "temp" : {  }
     };
 
 
     return result;
 });
-

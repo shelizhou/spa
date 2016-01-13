@@ -1,0 +1,109 @@
+@charset "utf-8";
+
+// 常用模块
+.m_box {@include box();}
+.m_box_v { @include box(v);}
+.m_flex1 { @include flex();}
+.m_over { @include overflowY();}
+.m_text { @include textOverflow();}
+
+// 弹出提示
+.m_tooltips {
+    color: #E4E4E4; position: absolute; top: 0; left: 0; right:0; z-index: 499;
+    @include transform( translateY(-110%) );
+    @include transition(all 0.3s ease-in-out);
+    @include boxalign(x);
+    .tooltip-text {
+        max-width:80%;word-break:break-all; margin-top:rem(20);
+        background-color: rgba(0, 0, 0, 0.7); text-align: center; padding: rem(15) rem(30); border-radius: rem(10);
+    }
+    &.on {@include transform( translateY(0%) );}
+}
+
+
+/*上下拉*/
+.m_topDom {
+    text-align: center;color: #000;text-align:center;overflow: hidden;
+	height:0px;@include transform( translateZ(0) ); @include transition( all 0.3s ease-in );
+    &.on { height:rem(90); }
+}
+.m_downDom {
+	text-align: center;color: #000;text-align:center; height:60px;
+	&_text {line-height:rem(60); display:inline-block;color:#A7A7A7; }
+	// &_logo {display:inline-block;margin-bottom: 6px;display:inline-block; background: url(images/loading.gif) center center no-repeat; width:60px;height:60px; background-size: 75px;    vertical-align: middle;  }
+	// &_loading {}
+	// &_reload {}
+}
+
+// 蒙板
+.m_mask {
+    position: absolute;top:0;left:0;bottom:0;right:0;
+    background: rgba(0, 0, 0, 0.3);
+    display:none;  overflow: hidden;
+    &.on {display:block;}
+}
+
+// 弹出框
+@if $dialog {
+    .m_boundingBox {
+        // 基本
+        width:80%; overflow: hidden; background: #fff;border-radius: rem(16);
+        margin: rem(400) auto 0;
+        display:none;
+        &.on {
+            display:block;
+            @include animation(dialoginter 0.2s forwards linear 0s 1 normal);
+        }
+        .header {border-bottom: 2px solid #F0F0F0;padding: 0.3rem;}
+        .body {min-height: 60px;}
+        .footer {
+            @include box();
+        }
+
+        .btn {
+            display: block;text-align: center;line-height:rem(90); color: #0ae;
+            @include flex(1);
+            border-right: 2px solid #F0F0F0;
+            border-top: 2px solid #F0F0F0;
+            &:last-child {border-right: none;}
+            @include box-sizing(border-box);
+            &:active, &.on {background: rgba(0, 0, 0, 0.16);}
+            @include transition(all 0.05s ease-in);
+            &.red { color: #F53E3E; }
+            &.close { color:#333333; }
+        }
+
+        // 其他
+        &.down {
+            margin:rem(10); position: absolute;width: 100%;
+            bottom:0px;left:0px;right:0px;display:block;top: auto;background:none;
+            @include transition(all 0.3s ease-in);
+            @include transform(translate(0,120%));
+            &.on {
+                @include transform(translate(0,0%));
+                @include animation(none);
+            }
+            .header {text-align: center;background: #f1f2f4;}
+            .footer {
+                @include box(v);
+            }
+            .btn {
+                border-bottom: 1px solid #b2b2b2;
+                border-top:none;
+                border-right:none;
+                background: #FDFEFF;
+                &:active, &.on {background: #DADADA;}
+                &.close { margin-top:0.05rem; }
+            }
+        }
+
+    }
+    @include keyframes(dialoginter) {
+        0% {
+            opacity: 0;@include transform(scale(1.4) translateZ(0));
+        }
+        100% {
+            opacity: 1; @include transform(scale(1) translateZ(0));
+        }
+    }
+}

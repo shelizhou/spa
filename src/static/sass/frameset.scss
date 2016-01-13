@@ -1,0 +1,100 @@
+@charset "UTF-8";
+@import "config.scss";
+@import "method.scss";
+@import "base.scss";
+
+@import "pages/index.scss";
+
+// html,body {overflow: hidden;position:absolute;top:0;bottom:0;left:0;right:0;}
+
+.s_wrap {position:absolute;top:0px;bottom:0px;left:0px;right:0px;overflow:hidden;}
+.s_page {
+    position:absolute;top:0px;bottom:0px;left:0px;right:0px;
+    .s_inner {
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    }
+    .s_inner_onmenu {bottom:rem(100);}
+    @include transition(all 0.2s ease);
+    opacity: 0.5; @include transform(scale(0.95) translateZ(0));
+    // 使用animation可能会对android造成卡顿
+    // &.on {
+    //     display: block;
+    //     @include animation(pageinter 0.2s forwards ease 0s 1 normal);
+    // }
+    &.out {display: none;}
+    &.in {opacity: 1;@include transform(scale(1) translateZ(0));}
+}
+
+@include keyframes(pageinter) {
+    0% {
+        opacity: 0.5; @include transform(scale(0.95) translateZ(0));
+    }
+    100% {
+        opacity: 1;@include transform(scale(1) translateZ(0));
+    }
+}
+
+.s_header {
+    height:rem(85);line-height: rem(85); color: #666666;
+    // background: #51ACD4;
+    text-align: center;
+}
+
+.s_menu {
+    position:absolute;bottom:0;left:0;right:0;background:#fff;height: rem(96);
+    border-top:2px solid #cccccc;border-bottom:2px solid #cccccc;
+    li {
+        float: left; color: #cccccc; width: rem(200);text-align: center;
+        i {display: block;font-size:rem(40);margin-top: rem(10);}
+        span {font-size:0.8em;}
+        &.on {color: #020202;}
+    }
+    &_num {width: rem(120);height: rem(120);position: absolute;background: #ccc;bottom:rem(22);right:rem(20);border-radius: 100%;}
+}
+
+// loading
+.m_loading {
+    z-index: 499;text-align: center;
+    @include transalign();
+    border-radius:rem(10);
+    padding:0.4rem 0.6rem;
+    background: rgba(71, 70, 70, 0.87);
+    $dotcolor : #fff;
+    .loading__img {
+        @include animation(rotate 2.5s forwards linear 0s infinite normal);
+        margin: rem(20) auto 0;
+        $size : rem(6);
+        $size2 : rem(3);
+        $size3 : rem(2);
+        $size4 : rem(1);
+        $ban1 : rem(20);
+        $ban2 : rem(14);
+        width: $size; height:$size;
+        border-radius: $size;
+        @include boxShadow(0 (-$ban1) 0 $size3 $dotcolor,           /* top, 1px expand */
+                  $ban1 0 $dotcolor,                /* right */
+                  0 $ban1 $dotcolor,                  /* bottom */
+                  (-$ban1) 0 $dotcolor,                 /* left */
+
+                  (-$ban2) (-$ban2) 0 $size4 $dotcolor,        /* left-top, 0.5px expand */
+                  $ban2 (-$ban2) 0 $size2 $dotcolor,        /* right-top, 1.5px expand */
+                  $ban2 $ban2 $dotcolor,                 /* right-bottom */
+                  (-$ban2) $ban2 $dotcolor);                /* left-bottom */
+    }
+    .loading__mess {
+        margin-top: rem(35);color: $dotcolor;
+    }
+    display:none;
+    &.on {
+        display:block;
+    }
+}
+
+@include keyframes(rotate) {
+  0% {
+    @include transform(rotate(0deg) translateZ(0));
+  }
+  100% {
+    @include transform(rotate(360deg) translateZ(0))
+  }
+}

@@ -51,14 +51,15 @@ gulp.task('clean', function () {
 
 // 合并
 gulp.task('concat', function() {
-    return gulp.src( ["./src/js/zepto/zepto.min.js", "./src/js/require/require.js"] )
+    return gulp.src( ["./src/static/js/zepto/zepto.min.js", "./src/static/js/require/require.js"] )
         .pipe(concat("combine.js"))
         .pipe(uglify())
-        .pipe(gulp.dest("./src/js"));
+        .pipe(gulp.dest("./src/static/js"));
 });
 // 构建rjs
 gulp.task('copymain', ['clean'], function() {
     return gulp.src( ["./src/main/**/*"] )
+        .pipe(gulpif("*.html", minifyHTML({ empty: true })))
         .pipe(gulp.dest("./temp/main"));
 });
 
@@ -68,15 +69,16 @@ gulp.task('rjs', ['copymain'], function() {
     requirejs.optimize({
         baseUrl: "./temp/main",
         paths: {
-            text : "../../src/js/require/text",
+            text : "../../src/static/js/require/text",
+            kload : "kload",
             config : "common/config",
             method : "common/method",
-            used : "common/used",
-            dialog : "common/dialog",
+            modules : "common/modules",
             defer : "plugins/defer/defer",
             fastclick : "plugins/fastclick/fastclick",
             template : "common/template",
             sheSlide : "plugins/sheSlide/sheSlide",
+            hammer : "plugins/hammer/hammer.min",
             vue : "common/vue"
         },
         name: "index",
@@ -108,16 +110,19 @@ gulp.task('get-all-rev', ['clean', 'main-rjs-rev', 'concat'], function() {
 
     return gulp.src([
             "./temp/**/*.js",
-            "!./temp/main/common/**/*.js", "!./temp/main/pages/**/*.js", "!./temp/main/plugins/**/*.js",
+            "!./temp/main/kload.js", "!./temp/main/common/**/*.js", "!./temp/main/pages/**/*.js", "!./temp/main/plugins/**/*.js",
             "./src/**/*.css",
             "./src/**/*.ttf", "./src/**/*.woff",
             "!./src/static/iconfont/**/*.css",
             "./src/**/*.js",
             "!./src/main/**/*.js",
-            "./src/**/*.png"
+            "!./src/topic/**/*.js",
+            "./src/**/*.png","./src/**/*.gif","./src/**/*.jpg"
         ])
         .pipe(rev())
         .pipe(gulpif("*.png", imagemin(imgOption)))
+        .pipe(gulpif("*.gif", imagemin(imgOption)))
+        .pipe(gulpif("*.jpg", imagemin(imgOption)))
         .pipe(gulpif("*.css", minifyCss()))
         .pipe(gulpif("*.js", uglify()))
         .pipe(gulp.dest("./dist"))
@@ -163,8 +168,14 @@ gulp.task('main', ['set-static-rev', 'set-main-rev'], function() {
 
 });
 
+// 专题复制
+gulp.task('topic', ['clean'], function(){
+    return gulp.src(["./src/topic/**/*"])
+        .pipe(gulp.dest( "./dist/topic" ) );
+});
+
 // 最后的清除
-gulp.task('last', ['main'], function() {
+gulp.task('last', ['main', 'topic'], function() {
     return gulp.src( [ "./temp/", "./dist/**/rev-manifest.json" ])
         .pipe(clean({force: true}));
 });
@@ -176,12 +187,12 @@ gulp.task('default', ['last']);
 
 // 编译sass
 gulp.task('sass', function () {
-  gulp.src('./src/static/*.scss')
+  gulp.src('./src/static/sass/*.scss')
     .pipe(sass().on('error', sass.logError))
     .pipe(gulp.dest('./src/static'));
 });
 gulp.task('sass:watch', function () {
-  gulp.watch('./src/static/**/*.scss', ['sass']);
+  gulp.watch('./src/static/sass/**/*.scss', ['sass']);
 });
 
 exports.setPrefix = function(name){

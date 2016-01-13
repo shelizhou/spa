@@ -5,9 +5,6 @@ define([ 'config', 'method', 'defer'],
 
     return {
         init : function($p, parms){
-            $("#J__back").on("click", function(){
-                METHOD.back();
-            })
 
         },
         active : function($p, parms){

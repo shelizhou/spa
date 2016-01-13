@@ -11,14 +11,30 @@
         var IS_DEGUG = true;
     </script>
     <!-- 处理viewport,rem -->
-    <script src="/js/head.js"></script>
+    <script src="/static/js/head.js"></script>
 
 </head>
 <body>
 
-    <div id="J__wrap" class="wrap">
+    <div id="J__wrap" class="s_wrap" style="display:none;">
         <!-- 页面容器 .page -->
         <div id="J__pages" class=""></div>
+
+        <!-- 菜单 -->
+        <div id="J__menu" class="s_menu">
+            <ul>
+                <li class="J__load" data-page="index">
+                    <i class="icon-home"></i><span>主页</span>
+                </li>
+                <li class="J__load" data-page="category">
+                    <i class="icon-home"></i><span>分类</span>
+                </li>
+                <li class="J__load" data-page="me">
+                    <i class="icon-home"></i><span>我的</span>
+                </li>
+            </ul>
+            <div class="s_menu_num"></div>
+        </div>
 
         <!-- loading -->
         <div id="J__m_loading" class="m_loading on"><div class="loading__img"></div><div class="loading__mess"><span class="J__loadingmess">加载中</span><span class="dotloading"></span></div></div>
@@ -30,6 +46,7 @@
         ;(function(){
             var head = document.querySelector('head'),
                 body = document.querySelector('body'),
+                wrap = document.querySelector('#J__wrap'),
                 // 判断是不是支持本地存储
                 isLocalStorageSupported = (function() {
                     var testKey = 'test',
@@ -80,19 +97,32 @@
                             // 有缓存并且版本是一致的
                             if (k && k.version === v.url) {
                                 me.setFile(type, "inline", k.content, null ,i);
+                                if (v.showFrame) {
+                                    wrap.style.display = "block";
+                                }
                             } else {
                                 me.loadFile(v.url, function(content){
                                     ls.setItem(name, JSON.stringify({version:v.url, content:content}));
                                     me.setFile(type, "inline", content, null, i);
+                                    if (v.showFrame) {
+                                        wrap.style.display = "block";
+                                    }
                                 }, function(){
                                     // me.setFile(type, "out", null, v.url, i);
                                 });
                             }
                         } else {
                             // 不支持缓存ls ,或者在调试中
+
+                            if (IS_DEGUG) {
+                                v.url += "?" + START_TIME.getTime();
+                            }
                             if (type === "css") {
                                 // 为了css方便调试
                                 me.setFile(type, "out", null, v.url, i);
+                                if (v.showFrame) {
+                                    wrap.style.display = "block";
+                                }
                             } else {
                                 me.loadFile(v.url, function(content){
                                     me.setFile(type, "inline", content, null, i);
@@ -111,6 +141,7 @@
 
             // 下载文件
             Loader.prototype.loadFile = function(url, success, error){
+
                 var xhr = new XMLHttpRequest();
 
                 xhr.open("get", url, true);
@@ -166,20 +197,21 @@
 
             var fileJson = {
                 js : [
-                    // { name:"zepto", url:"/js/zepto/zepto.min.js" },
-                    // { name:"require", url:"/js/require/require.js" },
+                    // { name:"zepto", url:"/static/js/zepto/zepto.min.js" },
+                    // { name:"require", url:"/static/js/require/require.js" },
 
-                    { name:"combine", url:"/js/combine.js" },
+                    { name:"combine", url:"/static/js/combine.js" },
                     // 业务js
                     { name: "main", url: "/main/index.js" }
                 ],
                 css : [
                     // 框架样式(小文件)
-                    { name: "frameset", url: "/static/frameset.css", },
+                    { name: "frameset", url: "/static/frameset.css", showFrame:true},
                     // 业务样式
-                    { name: "main", url: "/static/main.css", }
+                    { name: "main", url: "/static/main.css" }
                 ]
             };
+
             var Load = new Loader(fileJson);
         })();
     </script>

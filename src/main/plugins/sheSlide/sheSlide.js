@@ -1,13 +1,13 @@
 /**
  * [SheSlide description]
- * @description 轮播
+ * @description 轮播, 依赖zepto
  */
 
 ;(function(undefined) {
 
     "use strict";
 	var SheSlide = function(o){
-		
+
 		o = o || {};
 
 		var result = {};
@@ -70,8 +70,8 @@
 			slideDistant = !opts.isV ? document.documentElement.clientWidth : $conBox.parent().height();
 			size = $conBox_child.length;
 			if (!opts.isV) {
-				$conBox.css({width: size * slideDistant + "px"});
-				$conBox_child.css({width: slideDistant + "px"});
+				$conBox.css({width: size * 10 + "rem"});
+				$conBox_child.css({width: 10 + "rem"});
 			} else {
 				$conBox.css({height: size * slideDistant});
 				$conBox_child.css({height: slideDistant});
@@ -81,7 +81,7 @@
 		// 处理事件
 		var setEvent = function(){
 			var oldAuto = opts.auto;
-			
+
 			$titCell.on("click", function(){
 				var i = $titCell.index($(this));
 				doPlay(i);
@@ -97,7 +97,7 @@
 
 			var event_start_name = "mousedown touchstart",
 				event_move_name = "mousemove touchmove",
-				event_end_name = "mouseup touchend", 
+				event_end_name = "mouseup touchend",
 				flag = false,
 				startX = 0, startY = 0,
 				distD = 0;
@@ -196,17 +196,17 @@
 		//滑动效果
 		var translate = function( dist, speed) {
 			speed = (typeof speed === "undefined") ? opts.delayTime : speed;
-			
+
 			var ele_style = $conBox.get(0).style;
 
 			if (!isIE) {
 			    ele_style.webkitTransitionDuration =  ele_style.MozTransitionDuration = ele_style.msTransitionDuration = ele_style.OTransitionDuration = ele_style.transitionDuration =  speed + 'ms';
 			    if (!opts.isV) {
 				    ele_style.webkitTransform = 'translate(' + dist + 'px,0)' + 'translateZ(0)';
-				    ele_style.msTransform = ele_style.MozTransform = ele_style.OTransform = 'translateX(' + dist + 'px)'; 
+				    ele_style.msTransform = ele_style.MozTransform = ele_style.OTransform = 'translateX(' + dist + 'px)';
 			    } else {
 			    	ele_style.webkitTransform = 'translate(0,' + dist + 'px)' + 'translateZ(0)';
-				    ele_style.msTransform = ele_style.MozTransform = ele_style.OTransform = 'translateY(' + dist + 'px)'; 
+				    ele_style.msTransform = ele_style.MozTransform = ele_style.OTransform = 'translateY(' + dist + 'px)';
 			    }
 		    } else {
 			    if (!opts.isV) {
@@ -216,7 +216,7 @@
 			    }
 		    }
 
-		  
+
 		}
 
 		// 折行回调
@@ -263,7 +263,7 @@
 
 	}
 
-	// 检测上下文环境是否为 AMD 或者 CMD   
+	// 检测上下文环境是否为 AMD 或者 CMD
     if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function() {
             return SheSlide;
@@ -272,7 +272,7 @@
     // 检查上下文是否为 node
     } else if (typeof module !== 'undefined' && module.exports) {
         module.exports = SheSlide;
-        
+
     } else {
         window.SheSlide = SheSlide;
     }

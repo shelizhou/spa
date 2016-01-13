@@ -1,16 +1,15 @@
-
 var FS = require("fs"),
     URL = require("url"),
     HTTP = require("http"),
     PATH = require("path"),
     MARKDOWN = require("markdown").markdown,
     HTTPPROXY = require('http-proxy');
-    // ZLIB = require('zlib');
+// ZLIB = require('zlib');
 
 
 var proxy = HTTPPROXY.createProxyServer({});
 
-exports.init = function(serverport, filename){
+exports.init = function(serverport, filename) {
     var server = HTTP.createServer(function(req, res) {
 
     }).listen(serverport, "0.0.0.0");
@@ -27,7 +26,7 @@ exports.init = function(serverport, filename){
         }
 
         // 文件请求
-        if (req.url != '/_buildweb' && req.url.indexOf('/_ajax') === -1 ) {
+        if (req.url != '/_buildweb' && req.url.indexOf('/_ajax') === -1) {
             FS.exists(pathname, function(exists) {
                 var isMarkdown = false;
                 if (exists) {
@@ -84,7 +83,7 @@ exports.init = function(serverport, filename){
                         str = "<link rel='stylesheet' href='md/css.css'> <script src='md/js.js'></script>";
                         if (isMarkdown) {
                             try {
-                                res.end( MARKDOWN.toHTML(data.toString()) + str);
+                                res.end(MARKDOWN.toHTML(data.toString()) + str);
                             } catch (e) {
                                 console.log(e);
                                 res.end(data);
@@ -105,10 +104,18 @@ exports.init = function(serverport, filename){
         // 反向代理
         if (req.url.indexOf('/_ajax') !== -1) {
             req.url = req.url.substring(6);
-            proxy.web(req, res, { target: 'http://show.bingosoft.net' });
+            try {
+                proxy.web(req, res, {
+                    target: exports.proxyUrl
+                });
+            } catch (e) {
+                console.log(e);
+            }
         }
     });
 
     return server;
 
 }
+
+exports.proxyUrl = "http://show.bingosoft.net";

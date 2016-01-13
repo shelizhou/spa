@@ -11,13 +11,13 @@ define([ "./plugins/vue/vue" ],
     "use strict";
 
     // 指令
-    Vue.directive('value', {
-        bind: function () {
-        },
-        update: function(value){
-            this.el.innerHTML = value;
-        }
-    });
+    // Vue.directive('value', {
+    //     bind: function () {
+    //     },
+    //     update: function(value){
+    //         this.el.innerHTML = value;
+    //     }
+    // });
 
 
     return Vue;

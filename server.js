@@ -7,12 +7,6 @@ var FIlE = require('./file'),
     OS = require('os');
 
 
-// for (var i = 0; i < OS.networkInterfaces().en0.length; i++) {
-//     if (OS.networkInterfaces().en0[i].family == 'IPv4') {
-//         IPv4 = OS.networkInterfaces().en0[i].address;
-//     }
-// }
-
 // 获取ip
 function getIPAddress() {
     var interfaces = OS.networkInterfaces();
@@ -79,6 +73,12 @@ buildServer.on('request', function(req, res) {
             } else if (info.ajaxtype === "opendist") {
                 SPAWN('open', [url + (PORT + 2) + "/index.html"]);
                 res.end(JSON.stringify({ajaxtype:info.ajaxtype}));
+
+            } else if (info.ajaxtype === "svn") {
+                comminsvn();
+                res.end(JSON.stringify({ajaxtype:info.ajaxtype}));
+            } else if (info.ajaxtype === "getProxyUrl") {
+                res.end(JSON.stringify({ajaxtype:info.ajaxtype, proxyUrl:FIlE.proxyUrl}));
             }
         });
     }

@@ -1,6 +1,6 @@
 /*
 * @name: dialog
-* @overview: 
+* @overview:
 * @required: jquery
 * @return: obj [description]
 * @author: she
@@ -38,6 +38,13 @@ define([], function () {
 	      return this;
 	    },
 
+		// 删除自定义事件
+		off: function(type){
+			if (this.handlers) {
+				this.handlers[type] = [];
+			}
+		},
+
 	    render: function(container) {
 	      this.renderUI();
 	      this.handlers = {};
@@ -59,7 +66,12 @@ define([], function () {
 	}
 
 
-	function Chosen() {
+	function Chosen(cfg) {
+		// 返回对象
+		if (!(this instanceof Chosen)) {
+			return new Chosen(cfg);
+		}
+
 	    this.cfg = {
 	      title: '',
 	      content: '',
@@ -73,6 +85,11 @@ define([], function () {
 	      contentClass : "",
 	      pifuClass : ""
 	    };
+
+		$.extend(this.cfg, cfg);
+		this.render();
+		return this;
+
 	}
 
 	Chosen.prototype = $.extend({}, new Widget(), { // 继承Widget类
@@ -84,7 +101,7 @@ define([], function () {
 		    	className = "";
 
 		    for(; i < l; i++ ){
-		    	className = "window_Btn"
+		    	className = "btn";
 		    	if(class4Btn && class4Btn[i]){
 		    		className += " " + class4Btn[i];
 		    	}
@@ -92,9 +109,9 @@ define([], function () {
 		    }
 			this.boundingBox = $(
 				'<div '+ (this.cfg.id ? ('id="'+ this.cfg.id +'"') : "") +' class="m_boundingBox">' +
-				  '<div class="window_header">' +this.cfg.title+ '</div>' +
-				  ( this.cfg.content ? '<div class="window_body '+ this.cfg.contentClass +'">' +this.cfg.content+ '</div>' : '') +
-				  '<div class="window_footer">' +html+ '</div></div>' +
+				  '<div class="header">' +this.cfg.title+ '</div>' +
+				  ( this.cfg.content ? '<div class="body '+ this.cfg.contentClass +'">' +this.cfg.content+ '</div>' : '') +
+				  '<div class="footer">' +html+ '</div></div>' +
 				'</div>'
 			);
 
@@ -103,7 +120,7 @@ define([], function () {
 			if ($container.length !== 1) {
 				$container = $(document.body);
 			}
-			
+
 			// 遮罩层
 			if(this.cfg.hasMask) {
 				this._mask = $('<div class="m_mask"></div>');
@@ -112,7 +129,7 @@ define([], function () {
 
 			// 关闭标题
 			if(!this.cfg.title) {
-				this.boundingBox.find(".window_header").css("display","none");
+				this.boundingBox.find(".header").css("display","none");
 			}
 
 			this.boundingBox.appendTo($container);
@@ -127,16 +144,17 @@ define([], function () {
 	    // 事件
 	    bindUI: function() {
 	    	var that = this;
-	    	this.boundingBox.on('click', '.window_Btn', function() {
+	    	this.boundingBox.on('click', '.btn', function() {
 
 				var i = $(this).index();
-	        	
+
 	        	that.fire('alert', i);
 
+	        	that.fire('showAlert', i);
 				// that.destroy();
 			});
 
-			
+
 			if(this.cfg.handler4Btn) {
 			  this.on('alert', this.cfg.handler4Btn);
 			};
@@ -148,19 +166,24 @@ define([], function () {
 			}
 	    },
 
-	    showUI: function(){
+	    showUI: function(fn){
 			this.boundingBox.addClass("on");
 			if(this.cfg.hasMask) {
 				this._mask.addClass("on");
 			}
+			if (typeof fn === "function") {
+				this.on('showAlert', fn);
+			}
 			return this;
 		},
 		hideUI: function(){
+
 			var _this = this;
 			_this.boundingBox.removeClass("on");
 			if(_this.cfg.hasMask) {
 				_this._mask.removeClass("on");
 			}
+			this.off('showAlert');
 			return _this;
 
 		},
@@ -179,25 +202,15 @@ define([], function () {
 
 	    changeCfg: function(cfg){
 	    	$.extend(this.cfg, cfg);
-			this.boundingBox.find(".window_header").html(cfg.title);
-			this.boundingBox.find(".window_body").html(cfg.content);
+			this.boundingBox.find(".header").html(cfg.title);
+			this.boundingBox.find(".body").html(cfg.content);
 
 		},
 
-	    init: function(cfg) {
-	      $.extend(this.cfg, cfg);
-	      this.render();
-	      return this;
-	    }, 
 
-	    
 	});
-	
 
 
-	result.Chosen = Chosen;
-
-
- 	return result;  
+ 	return Chosen;
 
 });

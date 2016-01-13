@@ -1,121 +1,178 @@
 /*
-* @name: 公共方法
-* @overview:
-* @required: null
-* @return: obj [description]
-* @author: she
-*/
+ * @name: 公共方法
+ * @overview:
+ * @required: null
+ * @return: obj [description]
+ * @author: she
+ */
 
-define(["config", "defer", "used"], 
-    function (  CONFIG, Defer, USED ) {
-    "use strict";
+define(["config", "defer"],
+    function(CONFIG, Defer) {
+        "use strict";
 
-    var result = {};
+        var result = {};
 
-    // 设备准好了
-    var isDeivceReady = Defer(function(r){
-        r.resolve();
-        // if (CONFIG.isBingoDegbug) {
-        //     document.addEventListener("deviceready", function() {
-        //         r.resolve();
-        //     }, false);
-        // } else {
-        //     r.resolve();
-        // }
-    });
-    result.isDeivceReady = isDeivceReady;
+        // 请求接口
+        result.ajax = function(url, jsonParam) {
 
-    // 请求接口
-    result.ajax = function(methodName, jsonParam) {
+            var defer = Defer(),
+                ajaxJquery;
 
-        var defer = Defer(),
-            ajaxJquery,
-            url =  methodName; //CONFIG.url.base +
+            jsonParam = jsonParam || {};
 
-        jsonParam = jsonParam || {};
 
-        var getData = function(){
-            if ( typeof Cordova !== "undefined" ) {
-                app.post(url, jsonParam, function(res) {
-                    var json = null;
-                    try {
-                        // bingo.alert(res);
-                        var data = res.returnValue;
-                        json = JSON.parse(data);
-                        if (json.code === 200) {
-                            defer.resolve(json);
-                        } else {
-                            USED.alert(json.mess);
-                            defer.reject();
-                        }
-                    } catch (e) {
-                        defer.reject({
-                            type: 3,
-                            mess: "数据解析出错"
-                        });
+            ajaxJquery = $.ajax({
+                url: url,
+                type: "post",
+                data: jsonParam,
+                dataType: "json",
+                async: true,
+                success: function(json) {
+                    defer.resolve(json);
+                },
+                error: function(err) {
+                    if (err.statusText !== "timeout") {
+                        USED.alert("网络异常");
+                        defer.reject();
+                    } else {
+                        USED.alert("超时");
+                        defer.reject();
+
                     }
-                }, function(err) {
-                    USED.alert("网络问题");
-                    defer.reject({
-                        type: 2,
-                        mess: "网络问题"
-                    });
-                });
-            } else {
-                ajaxJquery = $.ajax({
-                    url: url,
-                    type: "POST",
-                    data: jsonParam,
-                    dataType: "json",
-                    timeout: 20000,
-                    async: true,
-                    success: function(json) {
-                        // console.log(json);
-                        // if (json.code === 200) {
-                            defer.resolve(json);
-                        // } else {
-                            // USED.alert(json.mess);
-                            // defer.reject();
-                        // }
-                    },
-                    error: function(err) {
-                        if (err.statusText !== "timeout") {
-                            USED.alert("网络问题");
-                            defer.reject({
-                                type: 2,
-                                mess: "网络问题"
-                            });
-                        } else {
-                            USED.alert("超时");
-                            defer.reject({
-                                type: 1,
-                                mess: "超时"
-                            });
-                        }
-                    }
-                });
+                }
+            });
+
+
+
+            defer.abort = function() {
+                ajaxJquery && ajaxJquery.abort();
+                // USED.alert("取消请求");
+                defer.reject();
             }
+            return defer;
         };
 
-        getData();
-
-
-        defer.abort = function(){
-            ajaxJquery && ajaxJquery.abort();
-            defer.reject({
-                type: 4,
-                mess: "取消请求"
-            });
+        // 去除前后空格
+        result.trim = function(str) {
+            str = (typeof str === "string") ? str.replace(/(^\s*)|(\s*$)/g, "") : "";
+            return str;
         }
-        return defer;
-    };
 
-    // 返回
-    result.back = function(){
-        CONFIG.tempBack = true;
-        window.history.go(-1);
-    }
+        // 改变时间格式
+        result.changeTime = function(str, format) {
+            if (!str) return "";
+            if (!format) {
+                format = "yyyy-mm-dd"; //  hh:ii
+            };
+
+            if (typeof str === "string") {
+                date = new Date(str.replace(/-/g, "/").replace(/T/g, " ").replace(/\+.*$/g, ""));
+            } else {
+                date = str;
+            }
+
+            var objForReplace = {
+                y: function(length) {
+                    length = length < 2 ? 4 : length;
+                    return date.getFullYear().toString().slice(4 - length, 4);
+                },
+                m: function() {
+                    var s = date.getMonth() + 1 + "";
+                    if (s.length < 2) {
+                        s = "0" + s;
+                    }
+                    return s;
+                },
+                d: function() {
+                    var s = date.getDate() + "";
+                    if (s.length < 2) {
+                        s = "0" + s;
+                    }
+                    return s;
+                },
+                h: function() {
+                    var s = date.getHours() + "";
+                    if (s.length < 2) {
+                        s = "0" + s;
+                    }
+                    return s;
+                },
+                i: function() {
+                    var s = date.getMinutes() + "";
+                    if (s.length < 2) {
+                        s = "0" + s;
+                    }
+                    return s
+                },
+                s: function() {
+                    var s = date.getSeconds() + "";
+                    if (s.length < 2) {
+                        s = "0" + s;
+                    }
+                    return s;
+                },
+                w: function() {
+                    var s = date.getDay();
+                    return "周" + "日一二三四五六".charAt(s);
+                },
+                p: function() {
+                    var s = date.getDay();
+                    return "6012345".charAt(s);;
+                }
+            };
+            var reg = /y+|m+|d+|h+|i+|s+|w+|p+/gi
+            var rtStr = format.replace(reg, function(r) {
+                var len = r.length;
+                var type = r.charAt(0);
+                return objForReplace[type](len);
+            });
+
+            return rtStr;
+        }
+
+        // 提示
+        var $tool = $("#J__m_tooltips");
+        result.alert = function(mess, time) {
+            var defer = Defer();
+
+            if ($tool.length) {
+                $tool.find(".tooltip-text").html(mess);
+            } else {
+                $tool = $('<div id="J__m_tooltips" class="m_tooltips"/>');
+                $('<div class="tooltip-text"/>').html(mess).appendTo($tool);
+                $tool.appendTo('body');
+            }
+
+            $tool.get(0).offsetHeight;
+            $tool.addClass("on");
+
+            setTimeout(function() {
+                $tool.removeClass("on");
+                defer.resolve();
+            }, time || 2000);
+            return defer;
+        }
+
+        // loading
+        result.loading = {
+            $loaiing: $("#J__m_loading"),
+            show: function(mess) {
+                mess = (mess ? mess : '加载中');
+                if (this.$loaiing.length) {
+                    this.$loaiing.find(".J__loadingmess").html(mess);
+                } else {
+                    this.$loaiing = $('<div id="J__loadingF" class="m_loading"/>');
+                    this.$loaiing.html('<div class="loading__img"></div><div class="loading__mess"><span class="J__loadingmess">' + mess + '</span><span class="dotloading"></span></div>').appendTo('body');
+                }
+                this.$loaiing.addClass("on");
+            },
+            hide: function() {
+                this.$loaiing.removeClass("on");
+            }
+        }
 
 
-    return result;
-});
+
+
+        return result;
+    });

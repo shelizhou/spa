@@ -10,7 +10,7 @@
 
 ### 命名规范
 
-* 一切用*class*写样式，除需要特殊情况须商量
+* 一切用*class*写样式，除需要特殊情况可用id
 
 * *单行*编写css，表示继承关系需换行
 
@@ -47,6 +47,11 @@
 * pages/_xxx.scss 自定义业务模块
     - 以*p_*开头
 
+### 框架命名的
+
+* 样式的class以 *s_* 开头，例如：s\_wrap，s\_page，s\_menu
+
+* 与js相关的以 *J__* 开头，例如：J\_\_wrap， J\_\_pages， J\_\_page， J\_\_m\_loading，J\_\_load，J\_\_back，J\_\_menu
 
 
 ### 一些常用方法
