@@ -3,8 +3,6 @@
 @import "method.scss";
 @import "base.scss";
 
-@import "pages/index.scss";
-
 // 基本模块
 .m_box {@include box();}
 .m_box_v { @include box(v);}

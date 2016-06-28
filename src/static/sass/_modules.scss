@@ -145,3 +145,58 @@
         }
     }
 }
+
+// 轮播
+.m_slider {
+    position: relative;overflow: hidden;
+    &_main {
+        $height: rem(328);
+        background: #ccc;
+        height: $height;
+        img, .m_bgimg {width: 100%;height: $height; display: block;}
+        .m_bgimg {
+            &.m_bglogo {background-size: auto 40%; }
+        }
+    }
+    &_foot {
+        text-align: center; position: absolute; bottom:rem(30);left:0;right: 0;font-size: 0;
+        li { margin: 0 rem(12); display: inline-block;  background: #e3e3e3;border-radius: 100%;width: rem(15);height: rem(15);}
+        li.on {background: $mainColor;}
+    }
+}
+
+// 按钮
+.m_button {
+    background: $mainColor; color:#fff;text-align: center;line-height: 39px;height: 39px;border-radius: 5px;
+    i {margin-right: 8px;}
+    &.m_button_oneBottom { margin:rem(20) rem(30);  }
+    &.small {line-height: 25px;height: 25px;font-size: 13px;}
+    &.inline {padding:0 1em;display: inline-block;}
+    &.red {background:#EF4F4F; }
+    &:active {
+        color: rgba(255, 255, 255, 0.4);
+        background-color: #4DA53F;
+        &.red { background-color: #C13E3E;}
+        &.disabled { background-color: #bbb;color:#fff;}
+    }
+    &.redborder {border:1px solid #EF4F4F;background: #fff;color:#EF4F4F;}
+    &.blackborder {border:1px solid #232323;background: #fff;color:#232323;}
+    &.disabled {
+        background: #bbb;
+        &.redborder {border:1px solid #bbb;color:#bbb;background: none;}
+        &.blackborder {border:1px solid #bbb;color:#bbb;background: none;}
+    }
+}
+
+// 无大图背景
+.m_bglogo { background: #fff url(/static/img/logo_bg.png) center center no-repeat; background-size: 40% auto; }
+// 图片使用背景图
+.m_bgimg {
+    background-repeat: no-repeat;background-position: center center;background-size:100% 100%;
+    // @include transition(background 0.2s ease-in, background-size 0s); // bgs 也会跟着变
+    // @include animation(lazy-fadeIn 350ms linear 0ms 1 normal both);
+}
+// @include keyframes(lazy-fadeIn) {
+//     0% {opacity:0;}
+//     100% {opacity:1;}
+// }
