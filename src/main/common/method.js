@@ -32,10 +32,10 @@ define(["config", "defer"],
                 },
                 error: function(err) {
                     if (err.statusText !== "timeout") {
-                        USED.alert("网络异常");
+                        result.alert("网络异常");
                         defer.reject();
                     } else {
-                        USED.alert("超时");
+                        result.alert("超时");
                         defer.reject();
 
                     }
@@ -46,7 +46,7 @@ define(["config", "defer"],
 
             defer.abort = function() {
                 ajaxJquery && ajaxJquery.abort();
-                // USED.alert("取消请求");
+                // result.alert("取消请求");
                 defer.reject();
             }
             return defer;
@@ -130,48 +130,118 @@ define(["config", "defer"],
             return rtStr;
         }
 
-        // 提示
+        // swipeLeft , swipeRight,  swipeUp, swipeDown, longHold, doubleClick
+        result.touchEvent = function($dom, type, child, callback) {
+            if (typeof child !== 'string') {
+                callback = child;
+                child = "";
+            }
+            var touch = {};
+            var now, delta, longHoldTimeout;
+
+            function swipeDirection(x1, x2, y1, y2) {
+                var xDelta = Math.abs(x1 - x2),
+                    yDelta = Math.abs(y1 - y2)
+                return xDelta >= yDelta ? (x1 - x2 > 0 ? 'swipeLeft' : 'swipeRight') : (y1 - y2 > 0 ? 'swipeUp' : 'swipeDown')
+            }
+            $dom.on("touchstart", child, function(e) {
+                // console.log(e.originalEvent)
+                e.originalEvent && (e = e.originalEvent);
+                touch.x1 = e.touches[0].pageX;
+                touch.y1 = e.touches[0].pageY;
+                now = Date.now();
+                delta = now - (touch.last || now);
+                if (delta > 0 && delta <= 250) touch.isDoubleTap = true;
+                touch.last = now;
+                longHoldTimeout = setTimeout(function(){
+                  if (type === "longHold") {
+                    if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) || (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30)) {
+                    } else {
+                      callback.apply(this);
+                    }
+                  }
+                }, 750);
+
+
+            }).on('touchmove', child, function(e) {
+                e.originalEvent && (e = e.originalEvent);
+
+                touch.x2 = e.touches[0].pageX;
+                touch.y2 = e.touches[0].pageY;
+
+                // fix android 4.4 bug
+                if (touch.x2 && Math.abs(touch.x1 - touch.x2) > 10) {
+                    e.preventDefault();
+                }
+            }).on('touchend', child, function() {
+                if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) || (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30)) {
+                    if (type === swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)) {
+                        callback.apply(this);
+                    }
+                    touch = {};
+                }
+                if (touch.isDoubleTap) {
+                    if (type === "doubleClick") {
+                        callback.apply(this);
+                    }
+                    touch = {};
+                }
+                longHoldTimeout && clearTimeout(longHoldTimeout);
+            });
+        }
+
+
         var $tool = $("#J__m_tooltips");
         result.alert = function(mess, time) {
             var defer = Defer();
-
             if ($tool.length) {
                 $tool.find(".tooltip-text").html(mess);
             } else {
-                $tool = $('<div id="J__m_tooltips" class="m_tooltips"/>');
-                $('<div class="tooltip-text"/>').html(mess).appendTo($tool);
+                $tool = $('<div id="J__m_tooltips" class="m_tooltips none"/>');
+                $('<div class="tooltip-text tooltip-content"/>').html(mess).appendTo($tool);
                 $tool.appendTo('body');
             }
-
+            $tool.removeClass("down");
+            $tool.addClass("full");
+            // if( type === 2 ){
+            // } else {
+                // $tool.removeClass("full");
+                // $tool.addClass("down");
+            // }
+            $tool.removeClass("none");
             $tool.get(0).offsetHeight;
             $tool.addClass("on");
 
+            time = time || 2500;
             setTimeout(function() {
                 $tool.removeClass("on");
+                $tool.addClass("none");
                 defer.resolve();
-            }, time || 2000);
+            }, time);
             return defer;
         }
 
         // loading
         result.loading = {
             $loaiing: $("#J__m_loading"),
-            show: function(mess) {
+            show: function(mess, type) {
                 mess = (mess ? mess : '加载中');
                 if (this.$loaiing.length) {
                     this.$loaiing.find(".J__loadingmess").html(mess);
                 } else {
                     this.$loaiing = $('<div id="J__loadingF" class="m_loading"/>');
-                    this.$loaiing.html('<div class="loading__img"></div><div class="loading__mess"><span class="J__loadingmess">' + mess + '</span><span class="dotloading"></span></div>').appendTo('body');
+                    this.$loaiing.html('<div><div class="loading__img"></div><div class="loading__mess"><span class="J__loadingmess">' + mess + '</span><span class="dotloading"></span></div></div>').appendTo('body');
+                }
+                // 全屏的
+                if (type === 2) {
+                    this.$loaiing.addClass("full");
                 }
                 this.$loaiing.addClass("on");
             },
             hide: function() {
-                this.$loaiing.removeClass("on");
+                this.$loaiing.removeClass("on full");
             }
         }
-
-
 
 
         return result;

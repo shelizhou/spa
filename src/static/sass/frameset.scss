@@ -5,24 +5,62 @@
 
 @import "pages/index.scss";
 
-// html,body {overflow: hidden;position:absolute;top:0;bottom:0;left:0;right:0;}
+// 基本模块
+.m_box {@include box();}
+.m_box_v { @include box(v);}
+.m_flex1 { @include flex();}
+.m_box_df { @include flex();width: 0;} // 等分
+.m_over { @include overflowY();}
+.m_textOver { @include textOverflow();}
+.m_boxcenter {@include boxalign();}
 
+html { position: relative; max-width: 480px; height: 100%; margin: auto;background: #fff;}
 .s_wrap {position:absolute;top:0px;bottom:0px;left:0px;right:0px;overflow:hidden;}
 .s_page {
-    position:absolute;top:0px;bottom:0px;left:0px;right:0px;
-    .s_inner {
+    position:absolute;top:0px;bottom:0px;left:0px;right:0px;background: #F3F5F8; //#f4f5f9
+    .s_inner, .s_inner_onmenu {
         position: absolute; top: 0; left: 0; right: 0; bottom: 0;
     }
-    .s_inner_onmenu {bottom:rem(100);}
-    @include transition(all 0.2s ease);
-    opacity: 0.5; @include transform(scale(0.95) translateZ(0));
-    // 使用animation可能会对android造成卡顿
-    // &.on {
-    //     display: block;
-    //     @include animation(pageinter 0.2s forwards ease 0s 1 normal);
-    // }
+    .s_inner_onmenu {bottom:$bottomHeight;}
     &.out {display: none;}
-    &.in {opacity: 1;@include transform(scale(1) translateZ(0));}
+
+    // 普通放大 进入
+    &.fade {
+        // @include transition(all 225ms ease);opacity: 0.5;
+        // @include transform(scale(0.95) translateZ(0));
+        &.in {
+            // opacity: 1; @include transform(scale(1) translateZ(0));
+        }
+    }
+
+    // 左右进入
+    &.inlr {
+        @include transition(all 225ms ease);display: block;
+        @include transform(translate3d(100%,0,0));
+        &.in {
+            @include transform(translate3d(0%,0,0));
+        }
+        &.reverse {
+            @include transform(translate3d(-100%,0,0));
+            &.in {
+                 @include transform(translate3d(0%,0,0));
+            }
+        }
+    }
+
+    // 使用animation可能会对android造成卡顿
+    // @include animation(pageleft 225ms forwards ease-out 0s 1 normal);
+    // &.reverse {
+    //     @include animation(pageright 225ms forwards ease-out 0s 1 normal);
+    // }
+}
+@include keyframes(pageleft) {
+    0% { @include transform(translate3d(100%,0,0)); }
+    100% { @include transform(translate3d(0%,0,0)); }
+}
+@include keyframes(pageright) {
+    0% { @include transform(translate3d(-100%,0,0)); }
+    100% { @include transform(translate3d(0%,0,0)); }
 }
 
 @include keyframes(pageinter) {
@@ -35,59 +73,86 @@
 }
 
 .s_header {
-    height:rem(85);line-height: rem(85); color: #666666;
-    // background: #51ACD4;
-    text-align: center;
+    height:$topHeight;line-height: $topHeight;
+    background: $blockBg;border-bottom: $borderThin; text-align: center;box-sizing: border-box;color:$mainColor;
+    h2 {font-size: 18px;color:$fontColorBold;}
+    &_left, &_right {width: $topButtonSize;display: block;font-size: 20px;}
+    &_lbg {@include linearBGGradient(top, #72c366, #58bf46);color: #fff;border-bottom:none;h2 {color: #fff;} }
+    &_text {
+        text-align: center; font-size:18px; position: absolute;right:0;top:0;padding:0 0.8em;
+    }
+    &_more {
+        position:absolute;top:0;right:0;
+    }
+
 }
 
 .s_menu {
-    position:absolute;bottom:0;left:0;right:0;background:#fff;height: rem(96);
-    border-top:2px solid #cccccc;border-bottom:2px solid #cccccc;
+    position:absolute;bottom:0;left:0;right:0;background:#fafbfd;height: $bottomHeight;
+    border-top:$border;box-sizing: border-box;
     li {
-        float: left; color: #cccccc; width: rem(200);text-align: center;
-        i {display: block;font-size:rem(40);margin-top: rem(10);}
-        span {font-size:0.8em;}
-        &.on {color: #020202;}
+        float: left; color: #999; width: 2.5rem;text-align: center; height: $bottomHeight - 1;
+        i {display: block;font-size:27px;padding-top: 6px;height: 22.5px;line-height: 22.5px;}
+        span {font-size:12px;}
+        &.on {
+            color: $mainColor;
+            .icon-iconfonthome1:before {content: "\e63c"; }
+            .icon-iconfontfenlei1:before {content: "\e62b"; }
+            .icon-iconfontwode1:before {content: "\e651"; }
+        }
+        &:active {color: $mainColor;}
     }
-    &_num {width: rem(120);height: rem(120);position: absolute;background: #ccc;bottom:rem(22);right:rem(20);border-radius: 100%;}
 }
+
 
 // loading
 .m_loading {
-    z-index: 499;text-align: center;
+    z-index: 2;text-align: center;
     @include transalign();
     border-radius:rem(10);
-    padding:0.4rem 0.6rem;
-    background: rgba(71, 70, 70, 0.87);
-    $dotcolor : #fff;
+    width: rem(243);height: rem(243);
+    display:none;
+    background: rgba(40, 40, 40, 0.75);
     .loading__img {
-        @include animation(rotate 2.5s forwards linear 0s infinite normal);
-        margin: rem(20) auto 0;
-        $size : rem(6);
-        $size2 : rem(3);
-        $size3 : rem(2);
-        $size4 : rem(1);
-        $ban1 : rem(20);
-        $ban2 : rem(14);
-        width: $size; height:$size;
-        border-radius: $size;
-        @include boxShadow(0 (-$ban1) 0 $size3 $dotcolor,           /* top, 1px expand */
-                  $ban1 0 $dotcolor,                /* right */
-                  0 $ban1 $dotcolor,                  /* bottom */
-                  (-$ban1) 0 $dotcolor,                 /* left */
-
-                  (-$ban2) (-$ban2) 0 $size4 $dotcolor,        /* left-top, 0.5px expand */
-                  $ban2 (-$ban2) 0 $size2 $dotcolor,        /* right-top, 1.5px expand */
-                  $ban2 $ban2 $dotcolor,                 /* right-bottom */
-                  (-$ban2) $ban2 $dotcolor);                /* left-bottom */
+        margin: 0 auto; width: 0; height: 0; padding-top: rem(80);position: relative;
+        $sizew : rem(15);
+        $sizeh : rem(6);
+        i {
+            width: $sizew; height:$sizeh;position: absolute;display: block;background: #fff;
+            @include transformOrigin(left 50%);
+            @for $i from 1 through 12 {
+                &:nth-child(#{$i}) {
+                    @include transform(rotate(#{($i - 1) * 30}deg) translate($sizew, 0px));
+                    opacity: #{$i / 12 * 0.8 + 0.1};
+                    @include animation(loading_opacity 1.25s forwards linear #{$i * 1.25 / 12}s infinite normal);
+                }
+            }
+        }
     }
     .loading__mess {
-        margin-top: rem(35);color: $dotcolor;
+        margin-top: rem(75);color: #fff;    font-size: 14px;
     }
-    display:none;
     &.on {
         display:block;
     }
+    &.full {
+        top:0;bottom:0;left:0;right:0; @include transform(translate(0,0));
+        width: auto;height: auto;border-radius: 0;
+        // background: rgba(40, 40, 40, 0.45);
+        background: transparent;
+        & > div {width: rem(243);height: rem(243);background: rgba(40, 40, 40, 0.75);border-radius:rem(10);}
+        @include boxalign();
+    }
+}
+
+
+@include keyframes(loading_opacity) {
+  0% {
+      opacity:0.1;
+  }
+  100% {
+      opacity:0.8;
+  }
 }
 
 @include keyframes(rotate) {

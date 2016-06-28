@@ -83,7 +83,8 @@ define([], function () {
 	      maskClose: false,
 	      hasShow: false,
 	      contentClass : "",
-	      pifuClass : ""
+	      pifuClass : "",
+		  type : 1, // 1中间弹框(默认)  2下拉弹框
 	    };
 
 		$.extend(this.cfg, cfg);
@@ -92,27 +93,35 @@ define([], function () {
 
 	}
 
+	// 按钮html
+	function getFootHtml(text4Btn, class4Btn) {
+		var i = 0, l = text4Btn ? text4Btn.length : 0,
+			html = "",
+			class4Btn = class4Btn,
+			className = "";
+
+		for(; i < l; i++ ){
+			className = "btn m_active_bgw";
+			if(class4Btn && class4Btn[i]){
+				className += " " + class4Btn[i];
+			}
+			html += "<div class='"+ className +"'>" +text4Btn[i]+ "</div>";
+		}
+		return html;
+	}
+
+
 	Chosen.prototype = $.extend({}, new Widget(), { // 继承Widget类
 	    renderUI: function() {
 
-		    var i = 0, l = this.cfg.text4Btn ? this.cfg.text4Btn.length : 0,
-		    	html = "",
-		    	class4Btn = this.cfg.class4Btn,
-		    	className = "";
+		    var html = getFootHtml(this.cfg.text4Btn, this.cfg.class4Btn);
 
-		    for(; i < l; i++ ){
-		    	className = "btn";
-		    	if(class4Btn && class4Btn[i]){
-		    		className += " " + class4Btn[i];
-		    	}
-		    	html += "<div class='"+ className +"'>" +this.cfg.text4Btn[i]+ "</div>";
-		    }
 			this.boundingBox = $(
-				'<div '+ (this.cfg.id ? ('id="'+ this.cfg.id +'"') : "") +' class="m_boundingBox">' +
+				'<div '+ (this.cfg.id ? ('id="'+ this.cfg.id +'"') : "") +' class="m_boundingBox"><div class="m_boundingBox_inner">' +
 				  '<div class="header">' +this.cfg.title+ '</div>' +
 				  ( this.cfg.content ? '<div class="body '+ this.cfg.contentClass +'">' +this.cfg.content+ '</div>' : '') +
 				  '<div class="footer">' +html+ '</div></div>' +
-				'</div>'
+				'</div></div>'
 			);
 
 			// 外层
@@ -133,7 +142,15 @@ define([], function () {
 			}
 
 			this.boundingBox.appendTo($container);
-			this.cfg.pifuClass && this.boundingBox.addClass(this.cfg.pifuClass);
+			if(this.cfg.pifuClass) {
+				this.boundingBox.addClass(this.cfg.pifuClass);
+			} else {
+				if (this.cfg.type == 2) {
+					this.boundingBox.addClass("m_boundingBoxDown");
+				} else {
+					this.boundingBox.addClass("m_boundingBoxCenter");
+				}
+			}
 			if (!this.cfg.hasShow) {
 				this.hideUI();
 			} else {
@@ -146,10 +163,9 @@ define([], function () {
 	    	var that = this;
 	    	this.boundingBox.on('click', '.btn', function() {
 
+				if ($(this).hasClass("disabled")) return;
 				var i = $(this).index();
-
 	        	that.fire('alert', i);
-
 	        	that.fire('showAlert', i);
 				// that.destroy();
 			});
@@ -202,8 +218,11 @@ define([], function () {
 
 	    changeCfg: function(cfg){
 	    	$.extend(this.cfg, cfg);
-			this.boundingBox.find(".header").html(cfg.title);
-			this.boundingBox.find(".body").html(cfg.content);
+			this.boundingBox.find(".header").html(this.cfg.title);
+			this.boundingBox.find(".body").html(this.cfg.content);
+
+			var html = getFootHtml(this.cfg.text4Btn, this.cfg.class4Btn);
+			this.boundingBox.find(".footer").html(html);
 
 		},
 

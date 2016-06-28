@@ -10,7 +10,34 @@ $opera : false;
 $dialog : true;
 
 // 头部高度
-$topHeight: 60px;
+$topHeight: 47px; // 85
+// 头部按钮宽高度
+$topButtonSize: 45px; // 85
+
+// 底部高度
+$bottomHeight: 50px; // 100
 
 // 页面宽度
 $pageWidth: 750;
+
+// 输入框高度
+$inputHeight : 45px;
+
+// 块之间的间隔
+$blockJianju : 20;
+
+// 块颜色
+$blockBg: #fff; //#fff;
+
+// 边框
+$border : 1px solid #e2e2e2; //#e2e2e2;
+$borderThin : 1px solid #EFEFEF; //#e3e3e3;
+
+// 字体颜色
+$fontColor : #666;
+$fontColorBold : #272727;
+$fontColorThin : #999;
+$fontColorRed : #fc6667;
+
+// 主体高亮绿色
+$mainColor : #62c052; //#48b66f;

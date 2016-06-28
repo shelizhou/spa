@@ -1,0 +1,13 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Phil
+ * Date: 2016/3/10 0010
+ * Time: 15:34
+ */
+@ini_set("display_errors", true);
+define('IN_ECS',1);
+define('ROOT_PATH', str_replace('mobile', '', str_replace('\\', '/', __DIR__)));
+require(ROOT_PATH . "mobile/lib/includes/wx_init.php");
+wx_init();
+?>

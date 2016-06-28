@@ -4,7 +4,6 @@ define([ 'config', 'method', 'defer'],
 
     return {
         init : function($p, parms){
-            $(".J_time", $p).html( (new Date() - START_TIME) + " ms" );
         },
         active : function($p, parms){
         },

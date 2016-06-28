@@ -3,9 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <title>spa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection"content="telephone=no, email=no" />
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <!-- <link href=//new.15fen.com rel=dns-prefetch> -->
+
     <script type="text/javascript">
-        // 记录首屏幕时间
-        var START_TIME = new Date();
+        // 全局信息
+        var GLOBAL_MESS = {
+            // 记录首屏幕时间
+            startTime : new Date(),
+
+            // 构建会自动改
+            baseUrl: "",
+
+            ua: navigator.userAgent,
+
+            emmit: null, // 指到config的emmit
+
+            // 页面配置
+            pageConfig : {
+                defaultHash : "index",
+                hashConfig : {
+                    "index" : { isMenu: "index", tran:"fade" },
+                    "category" : { isMenu: "category", tran:"fade" },
+                    "me" : { isMenu: "me", tran:"fade" },
+                    "temp" : {  }
+                }
+            }
+        };
 
         // 调试状态（构建后自动改为false）
         var IS_DEGUG = true;
@@ -37,13 +68,40 @@
         </div>
 
         <!-- loading -->
-        <div id="J__m_loading" class="m_loading on"><div class="loading__img"></div><div class="loading__mess"><span class="J__loadingmess">加载中</span><span class="dotloading"></span></div></div>
-
+        <div id="J__m_loading" class="m_loading on">
+            <div>
+                <div class="loading__img"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <div class="loading__mess"><span class="J__loadingmess">加载中</span><span class="dotloading"></span></div>
+            </div>
+        </div>
     </div>
 
     <script type="text/javascript">
         // 本地资源加载器
         ;(function(){
+            var fileJson = {
+                js : [
+                    // 必须按照依赖顺序排
+
+                    // { name:"zepto", url:"/static/js/zepto/zepto.min.js" },
+                    // { name:"require", url:"/static/js/require/require.js" },
+
+                    // 静态资源合并
+                    { name:"combine", url:"/static/js/combine.js" },
+
+                    // 主框架js（包括控件）
+                    { name: "main", url: "/main/index.js" },
+                    // 业务js
+                    { name: "pages", url: "/main/pages.js" }
+                ],
+                css : [
+                    // 框架样式(小文件)
+                    { name: "frameset", url: "/static/frameset.css", showFrame:true},
+                    // 业务样式
+                    { name: "main", url: "/static/main.css" }
+                ]
+            };
+
             var head = document.querySelector('head'),
                 body = document.querySelector('body'),
                 wrap = document.querySelector('#J__wrap'),
@@ -62,19 +120,36 @@
                 // js排队插入
                 asyncJsFn = (function(){
                     var fn = [],
+                        l = fileJson.js.length, // 总共3个文件
                         index = 0;
 
-                    var tirgger = function(i){
-                        if ( fn[index] && index === i) {
-                            fn[index]();
-                            index++;
-                            tirgger(index);
-                        }
+                    // 按照注入顺序
+                    var tirgger = function(){
+                        if (index < 0) return;
+                        fn[l - index] && fn[l - index](function(){
+                            index--;
+                            tirgger();
+                        });
                     };
                     return {
-                        add : function(i, cb){
-                            fn[i] = cb;
-                            tirgger(i);
+                        add : function(i, howtype, el){
+                            index++;
+
+                            fn[i] = function(cb){
+                                body.appendChild(el);
+                                if (howtype === "inline") {
+                                    cb && cb();
+                                } else {
+                                    el.onload = function(){
+                                        cb && cb();
+                                    };
+                                }
+                            };
+
+                            // 最后一个
+                            if (index === l) {
+                                tirgger();
+                            }
                         }
                     }
                 })();
@@ -91,44 +166,56 @@
                         var pixname = "ls_"+ type +"file_", // 缓存key前缀,
                             name = pixname + v.name,
                             content = "",
-                            k = JSON.parse(ls.getItem(name)) || null;
-
+                            k = null;
+                        try {
+                            k = JSON.parse(ls.getItem(name));
+                        } catch (e) {
+                            k = null;
+                        }
                         if (!IS_DEGUG && isLocalStorageSupported) {
                             // 有缓存并且版本是一致的
-                            if (k && k.version === v.url) {
+                            if (k && (typeof k == "object") && k.version === v.url) {
                                 me.setFile(type, "inline", k.content, null ,i);
+                                if (!me.checkRight(type, k.content)) {
+                                    ls.removeItem(name);
+                                }
                                 if (v.showFrame) {
                                     wrap.style.display = "block";
                                 }
                             } else {
                                 me.loadFile(v.url, function(content){
-                                    ls.setItem(name, JSON.stringify({version:v.url, content:content}));
+                                    if (me.checkRight(type, content)) {
+                                        ls.setItem(name, JSON.stringify({version:v.url, content:content}));
+                                    }
                                     me.setFile(type, "inline", content, null, i);
                                     if (v.showFrame) {
                                         wrap.style.display = "block";
                                     }
                                 }, function(){
-                                    // me.setFile(type, "out", null, v.url, i);
+                                    me.setFile(type, "out", null, v.url + "?" + new Date().getTime(), i);
+                                    if (v.showFrame) {
+                                        wrap.style.display = "block";
+                                    }
                                 });
                             }
                         } else {
-                            // 不支持缓存ls ,或者在调试中
 
-                            if (IS_DEGUG) {
-                                v.url += "?" + START_TIME.getTime();
-                            }
-                            if (type === "css") {
+                            me.loadFile(v.url, function(content){
                                 // 为了css方便调试
-                                me.setFile(type, "out", null, v.url, i);
+                                if (IS_DEGUG && type === "css") {
+                                    me.setFile(type, "out", null, v.url, i);
+                                } else {
+                                    me.setFile(type, "inline", content, null, i);
+                                }
                                 if (v.showFrame) {
                                     wrap.style.display = "block";
                                 }
-                            } else {
-                                me.loadFile(v.url, function(content){
-                                    me.setFile(type, "inline", content, null, i);
-                                }, function(){
-                                });
-                            }
+                            }, function(){
+                                me.setFile(type, "out", null, v.url + "?" + new Date().getTime(), i);
+                                if (v.showFrame) {
+                                    wrap.style.display = "block";
+                                }
+                            });
                         }
                     });
 
@@ -139,25 +226,48 @@
 
             };
 
+            // 简单检查文件是否合法
+            Loader.prototype.checkRight = function(type, content) {
+                // 前3个是js, 后一个是css
+                if ( /(^var)|(^define)|(^require)|(^@charset)/.test(content) ) {
+                    return true;
+                } else {
+                    return false;
+                }
+            };
+
             // 下载文件
             Loader.prototype.loadFile = function(url, success, error){
 
-                var xhr = new XMLHttpRequest();
+                var xhr1 = new XMLHttpRequest();
+                url1 = url + "?" + GLOBAL_MESS.startTime.getTime();
+                xhr1.open("get", url1, true);
+                xhr1.send(null);
 
-                xhr.open("get", url, true);
-                xhr.send(null);
+                var xhr2, url2;
 
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState == 4) {
-                        if (xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
-                        // if (xhr.status >= 200 && xhr.status < 400) {
-                            (typeof success === "function") && success(xhr.responseText);
+                xhr1.onreadystatechange = function() {
+                    if (xhr1.readyState == 4) {
+                        // if (xhr1.status >= 200 && xhr1.status < 300 || xhr1.status == 304) {
+                        if (xhr1.status == 200 || xhr1.status == 304) {
+                            (typeof success === "function") && success(xhr1.responseText);
                         } else {
-                            (typeof error === "function") && error();
+                            xhr2 = new XMLHttpRequest();
+                            url2 = url + "?" + new Date().getTime();
+                            xhr2.open("get", url2, true);
+                            xhr2.send(null);
+                            xhr2.onreadystatechange = function() {
+                                if (xhr2.readyState == 4) {
+                                    if (xhr2.status == 200 || xhr2.status == 304) {
+                                        (typeof success === "function") && success(xhr2.responseText);
+                                    } else {
+                                        (typeof error === "function") && error();
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-
             };
 
             // 设置文件
@@ -189,31 +299,16 @@
                 if (filetype === "css") {
                     head.appendChild(el);
                 } else if (filetype === "js") {
-                    asyncJsFn.add(index, function(){
-                        body.appendChild(el);
-                    });
+                    asyncJsFn.add(index, howtype, el);
                 }
-            };
 
-            var fileJson = {
-                js : [
-                    // { name:"zepto", url:"/static/js/zepto/zepto.min.js" },
-                    // { name:"require", url:"/static/js/require/require.js" },
-
-                    { name:"combine", url:"/static/js/combine.js" },
-                    // 业务js
-                    { name: "main", url: "/main/index.js" }
-                ],
-                css : [
-                    // 框架样式(小文件)
-                    { name: "frameset", url: "/static/frameset.css", showFrame:true},
-                    // 业务样式
-                    { name: "main", url: "/static/main.css" }
-                ]
             };
 
             var Load = new Loader(fileJson);
         })();
+
+
+
     </script>
 
 </body>

@@ -26,11 +26,9 @@
 @mixin box ($o:h) {
     display: box;
     display: -webkit-box;
+    $orient : horizontal;
     @if $o == v {
         $orient : vertical;
-    }
-    @else {
-        $orient : horizontal;
     }
     box-orient: $orient;
     -webkit-box-orient: $orient;
@@ -47,6 +45,19 @@
 
     @if $moz {
         -moz-box-flex: $num;
+    }
+    @if $opera {
+    }
+}
+
+// http://www.css88.com/book/css/properties/flex/flex-shrink.htm
+// 值为0，配合外层box 可以做到不改变宽度让里面宽度撑开
+// 2.1-4.3 待测试
+@mixin flex-shrink ($num: 1) {
+    flex-shrink:$num;
+    -webkit-flex-shrink: $num;
+    @if $moz {
+        -moz-flex-shrink: $num;
     }
     @if $opera {
     }
@@ -255,6 +266,14 @@
         top: 50%;
         @include transform(translate(0%,-50%));
     }
+}
+
+// http://www.zhangxinxu.com/wordpress/2016/04/css-writing-mode/
+// 利用这个和text-align 可以垂直局中
+@mixin writingalign() {
+    -webkit-writing-mode: vertical-rl;
+    writing-mode: tb-rl;
+    writing-mode: vertical-rl;
 }
 
 // 消除 transition 闪屏

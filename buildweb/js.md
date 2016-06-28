@@ -12,17 +12,18 @@
 * static/js： 放zeptp、requirejs，head.js 一般不会变动
 
 * main
-    * index.js，kload.js 框架层js
+    * index.js，pages.js，kload.js 框架层js
 
     * common/ 公用模块
 
-        * config.js 配置
+        * modules.js 常用大模块（modules/下面的合集） (不常改动)
 
-        * method.js 常用方法
+        * vue.js、template.js 是插件的过度，因需要添公用的东西  (不常改动)
 
-        * modules.js 常用大模块（modules/下面的合集）
+        * config.js 业务配置
 
-        * vue.js、template.js 是插件的过度，因需要添公用的东西
+        * method.js 业务常用方法
+
 
     * pages/ 页面模块
 

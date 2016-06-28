@@ -51,7 +51,7 @@
 			$conBox = $slideCell.find(opts.mainCell);
 			$conBox_child = $conBox.children();
 			$titCell = $slideCell.find(opts.titCell);
-			$conBox.css({width:"100%", height:"100%"});
+			$conBox.css({width:"100%"});
 			$conBox_child.css({width:"100%", height:"100%"});
 			!opts.isV && $conBox_child.css("float", "left");
 			if (isIE) {
@@ -60,7 +60,7 @@
 
 			setSize();
 			!flag && setEvent();
-	    	!flag && doPlay(opts.defaultIndex, 0);
+	    	doPlay(opts.defaultIndex, 0);
 			!flag && doFun(0);
 
 		}
@@ -131,9 +131,9 @@
 
 	            if (distD === 0) return;
 		        var k = index;
-		        if ( distD < -slideDistant * 0.3 ) {
+		        if ( distD < -slideDistant * 0.2 ) {
 		            doPlay(++k);
-		        } else if ( distD > slideDistant * 0.3 ) {
+		        } else if ( distD > slideDistant * 0.2 ) {
 		            doPlay(--k);
 		        } else {
 		            doPlay(k);
@@ -160,11 +160,14 @@
 
 			if (i >= size) {
 				index = size - 1;
+                // index = 0;
 			}else if (i < 0) {
 				index = 0;
+                // index = size - 1;
 			} else {
 				index = i;
 			}
+            // console.log(index);
 
 			var dist =  -index * slideDistant;
 			translate(dist, speed);
@@ -172,7 +175,9 @@
 			$titCell.removeClass(opts.titOnClassName).eq(index).addClass(opts.titOnClassName);
 			$conBox_child.removeClass(opts.titOnClassName).eq(index).addClass(opts.titOnClassName);
 
-			autoPlay();
+            if (size > 1) {
+			    autoPlay();
+            }
 		}
 
 		// 自动播放
@@ -248,7 +253,7 @@
 			return result;
 		};
 
-		result.refresh = function(){
+		result.reset = function(){
 			init(true);
 		}
 

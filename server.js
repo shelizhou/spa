@@ -2,10 +2,22 @@
 var FIlE = require('./file'),
     GULP = require('./gulpfile'),
     QUERYSTRING = require('querystring'),
-    SPAWN = require('child_process').spawn,
     PORT = parseInt(process.argv[2], 10) || 9090,
     OS = require('os');
 
+// 打开浏览器
+var child_process = require('child_process');
+var cmd;
+if (process.platform === 'win32') {
+    cmd = 'start "%ProgramFiles%\Internet Explorer\iexplore.exe"';
+} else if (process.platform === 'linux') {
+    cmd = 'xdg-open';
+} else if (process.platform === 'darwin') {
+    cmd = 'open';
+}
+function openBrower(url) {
+    child_process.exec(cmd + ' "' + url + '"');
+}
 
 // 获取ip
 function getIPAddress() {
@@ -28,16 +40,9 @@ var buildServer = FIlE.init(PORT, "buildweb");
 var srcServer = FIlE.init(PORT + 1, "src");
 var distServer = FIlE.init(PORT + 2, "dist");
 
-SPAWN('open', [url + PORT + "/index.html"]);
-
+openBrower(url + PORT + "/index.html");
 GULP.getGulp().run(["sass", "sass:watch"]);
 
-// SPAWN("gulp", ["sass"]).stdout.on('data', function (data) {
-//     // console.log(data + "");
-// });
-// SPAWN("gulp", ["sass:watch"]).stdout.on('data', function (data) {
-//     // console.log(data + "");
-// });
 
 console.log("操控平台:  " + "http://" + IPv4 + ":" + PORT);
 console.log("源码工程:  " + "http://" + IPv4 + ":" + (PORT+1));
@@ -54,31 +59,33 @@ buildServer.on('request', function(req, res) {
             console.log("执行命令:  " + info.ajaxtype);
             if (info.ajaxtype === "gulp") {
                 // console.log(GULP);
-                GULP.setPrefix(info.text);
+                GULP.setConfig({
+                    prefix: info.text,
+                    isPhp: info.isPhp,
+                    baseurl: info.baseurl
+                });
                 GULP.getGulp().task('out_run', ['last'], function(){
                     console.log("构建成功");
                     res.end(JSON.stringify({ajaxtype:info.ajaxtype, success:true}));
                 });
                 GULP.getGulp().run(['out_run']);
-                // SPAWN("gulp").stdout.on('data', function (data) {
-                //     console.log(data + "");
-                // });
             } else if (info.ajaxtype === "exit") {
                 res.end(JSON.stringify({ajaxtype:info.ajaxtype}));
                 process.exit();
             } else if (info.ajaxtype === "opensrc") {
-                SPAWN('open', [url + (PORT + 1) + "/index.html"]);
+                openBrower(url + (PORT + 1) + "/index.html");
                 res.end(JSON.stringify({ajaxtype:info.ajaxtype}));
 
             } else if (info.ajaxtype === "opendist") {
-                SPAWN('open', [url + (PORT + 2) + "/index.html"]);
+                openBrower(url + (PORT + 2) + "/index.html");
                 res.end(JSON.stringify({ajaxtype:info.ajaxtype}));
 
-            } else if (info.ajaxtype === "svn") {
-                comminsvn();
-                res.end(JSON.stringify({ajaxtype:info.ajaxtype}));
             } else if (info.ajaxtype === "getProxyUrl") {
                 res.end(JSON.stringify({ajaxtype:info.ajaxtype, proxyUrl:FIlE.proxyUrl}));
+
+            } else if (info.ajaxtype === "watchsass") {
+                GULP.getGulp().run(['sass:watch']);
+
             }
         });
     }

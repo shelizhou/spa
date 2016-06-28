@@ -7,7 +7,8 @@
         * {margin: 0;padding:0;}
         .m_buttons {text-align: center;}
         .m_buttons .m_button {display: inline-block;margin:20px;}
-        .m_button { outline: none;width: 200px;height: 80px;text-align: center;    border-radius: 5px; border: 1px solid#ccc; cursor: pointer; background: #fff; color: #777; font-size: 17px; }
+        .m_button { outline: none;width: 200px;height: 70px;text-align: center;    border-radius: 5px; border: 1px solid#ccc; cursor: pointer; background: #fff; color: #777; font-size: 17px; }
+        .m_button.important { background: #D1F9CC; color: #8E8E8E;}
         .m_button:hover {opacity: 0.8;}
         .m_button:active {background: -webkit-linear-gradient(#E8E8E8, white);}
         .m_input { width: 300px; height: 35px; font-size:15px; }
@@ -26,12 +27,23 @@
     </div>
 
     <div class="m_buttons">
-        <label><span>资源前缀(后面不用加/): </span><input id="J__gulptext" class="m_input" placeholder="默认是空" type="text" value=""></label>
-        <button class="m_button" data-ajax="gulp">一键构建工程</button>
+        <button class="m_button" data-target="api/index.html">接口测试</button>
+        <button class="m_button" data-ajax="watchsass">构建sass</button>
+        <button class="m_button" data-duan="9091" data-target="static/iconfont/demo.html">字体图标</button>
     </div>
 
     <div class="m_buttons">
-        <label><span>反向代理地址: </span><input id="J__proxy" class="m_input" placeholder="" type="text" value=""></label>
+        <label><span>资源前缀(后面不用加/): </span><input id="J__gulptext" class="m_input" placeholder="默认是空" type="text" value=""></label>
+        <label><span>api地址: </span><input id="J__gulpapi" class="m_input" placeholder="默认是空" type="text" value=""></label>
+        <select id="J__select">
+            <option value="/new/mobile" isphp="1" baseurl="/new/mobile/api.php?">线上</option>
+            <option value="" isphp="0" baseurl="_ajax/mobile/api.php?">本机</option>
+        </select>
+        <button class="m_button important" data-ajax="gulp">一键构建工程</button>
+    </div>
+
+    <div class="m_buttons">
+        <label><span>反向代理地址: </span><input id="J__proxy" class="m_input" readonly  placeholder="" type="text" value=""></label>
     </div>
 
 
@@ -47,7 +59,9 @@
     <script>
         var ajax = function(parms, success){
             var xhr = new XMLHttpRequest();
-            xhr.open("post", "/_buildweb", true);
+            xhr.open("POST", "/_buildweb", true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            // xhr.send((parms || {}));
             xhr.send(formatParams(parms || {}));
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200 ) {
@@ -68,20 +82,40 @@
 
         var buttons = document.querySelectorAll(".m_button"),
             tip = document.getElementById("J__tip"),
+            select = document.getElementById("J__select"),
+            api = document.getElementById("J__gulpapi"),
             text = document.getElementById("J__gulptext");
+
+        var isPhp,
+            baseurl;
+        select.addEventListener("change", function(){
+            text.value = select.value;
+            isPhp = select[select.selectedIndex].getAttribute('isphp');
+            api.value = select[select.selectedIndex].getAttribute('baseurl');
+        });
+        text.value = select.value;
+        api.value = select[0].getAttribute('baseurl');
+        isPhp = select[0].getAttribute('isphp');
+
         for (var i = 0; i < buttons.length; i++) {
             buttons[i].addEventListener("click", function(){
-                var ajaxtype = this.getAttribute('data-ajax');
-                var datatarget = this.getAttribute('data-target');
+                var ajaxtype = this.getAttribute('data-ajax'),
+                    ajaxduan = this.getAttribute('data-duan'),
+                    datatarget = this.getAttribute('data-target');
                 if (datatarget) {
-                    window.location.href = datatarget;
+                    if (ajaxduan) {
+                        var c = window.location.protocol + "//" + window.location.hostname + ":"+ ajaxduan +"/" + datatarget;
+                        window.open(c, "_blank");
+                    } else {
+                        window.open(datatarget, "_blank");
+                    }
                 }
                 if (!ajaxtype) return;
                 if (ajaxtype === "gulp") {
                     tip.style.display = "block";
                     tip.innerHTML = "构建中...."
                 }
-                ajax({ajaxtype:ajaxtype, text: text.value}, function(res){
+                ajax({ajaxtype:ajaxtype, text: text.value, isPhp: isPhp, baseurl: api.value}, function(res){
                     if (res.ajaxtype === "gulp" && res.success) {
                         tip.innerHTML = "构建成功";
                         tip.style.display = "none";

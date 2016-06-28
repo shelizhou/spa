@@ -38,9 +38,8 @@ var replace = require('gulp-replace');
 // 编译sass
 var sass = require('gulp-sass');
 
-
-
-var prefix = "";
+// 改名字
+var rename = require('gulp-rename');
 
 
 // 清除所有
@@ -65,35 +64,64 @@ gulp.task('copymain', ['clean'], function() {
 
 gulp.task('rjs', ['copymain'], function() {
 
-    var arr = getAmdFiles("./temp/main/pages");
-    requirejs.optimize({
+    // 页面依赖
+    var pagesArr = getAmdPagesFiles("./temp/main/pages");
+
+    // 公共模块依赖
+    var commomArr = [
+        'text', 'kload', 'fastclick',
+        // 'md5',
+        'defer', 'sheSlide', 'vue_plugins',  'wx_plugins', 'mobiscroll'
+    ];
+
+    return requirejs.optimize({
         baseUrl: "./temp/main",
         paths: {
             text : "../../src/static/js/require/text",
+            // 以下可能会变动
             kload : "kload",
             config : "common/config",
             method : "common/method",
             modules : "common/modules",
             defer : "plugins/defer/defer",
-            fastclick : "plugins/fastclick/fastclick",
-            template : "common/template",
+            // md5 : "plugins/md5/md5",
+            fastclick : "plugins/fastclick/index",
             sheSlide : "plugins/sheSlide/sheSlide",
-            hammer : "plugins/hammer/hammer.min",
-            vue : "common/vue"
+            vue_plugins : "plugins/vue/vue",
+            vue : "common/vue",
+            wx_plugins : "plugins/wx/jweixin-1.0.0",
+            wx : "common/wx",
+            mobiscroll : "plugins/mobiscroll/mobiscroll.custom-2.6.2.min"
         },
-        name: "index",
-        out: "./temp/main/index.js",
-        include: arr, // 强制依赖
+        // name: "index",
+        // out: "./temp/main/index.js",
+        // include: pagesArr // 强制依赖
 
+        modules: [{
+           name: "index",
+           include: commomArr,
+        },{
+            name: "pages",
+            exclude: commomArr,
+            include: pagesArr
+        }],
+       dir: "./temp/dist"
     });
+
 
 });
 
-gulp.task('main-rjs-rev', ['rjs'], function() {
+gulp.task('main-rjs-rev-wait', ['rjs'], function() {
+    // 需要等待，why?
+    return gulp.src( ["./temp/dist/index.js", "./temp/dist/pages.js"]);
 
-    return gulp.src( ["./temp/main/index.js"])
+});
+
+gulp.task('main-rjs-rev', ['main-rjs-rev-wait'], function() {
+
+    return gulp.src( ["./temp/dist/index.js", "./temp/dist/pages.js"])
         .pipe(uglify())
-        .pipe(gulp.dest("./temp/main"));
+        .pipe(gulp.dest("./temp/copy/main"));
 
 });
 
@@ -102,20 +130,33 @@ gulp.task('main-rjs-rev', ['rjs'], function() {
 gulp.task('get-all-rev', ['clean', 'main-rjs-rev', 'concat'], function() {
 
     var imgOption = {
-        progressive: true,
-        optimizationLevel: 1,
-        svgoPlugins: [{removeViewBox: false}],
-        use: [pngquant()]
+       progressive: true,
+       optimizationLevel: 1,
+       svgoPlugins: [{removeViewBox: false}],
+       use: [pngquant()]
     };
 
     return gulp.src([
-            "./temp/**/*.js",
-            "!./temp/main/kload.js", "!./temp/main/common/**/*.js", "!./temp/main/pages/**/*.js", "!./temp/main/plugins/**/*.js",
+            "./temp/copy/**/*.js",
             "./src/**/*.css",
-            "./src/**/*.ttf", "./src/**/*.woff",
+            "./src/**/*.ttf", "./src/**/*.woff", "./src/**/*.svg",
             "!./src/static/iconfont/**/*.css",
             "./src/**/*.js",
-            "!./src/main/**/*.js",
+
+            // 为了asyn的js
+            "!./src/main/pages/**/*.js",
+            "!./src/main/plugins/**/*.js",
+            "!./src/main/common/**/*.js",
+            "!./src/main/*.js",
+            // "!./src/main/**/*.js",
+
+            // 为了asyn的html
+            "./src/**/*.html",
+            "!./src/*.html",
+            "!./src/topic/**/*.html",
+            "!./src/main/pages/**/*.html",
+            "!./src/static/**/*.html",
+
             "!./src/topic/**/*.js",
             "./src/**/*.png","./src/**/*.gif","./src/**/*.jpg"
         ])
@@ -136,7 +177,7 @@ gulp.task('set-static-rev', ['get-all-rev'], function() {
     var manifest_json = gulp.src("./dist/rev-manifest.json");
 
     return gulp.src(["./dist/static/*.css"])
-        .pipe(revReplace({ manifest: manifest_json, prefix:prefix }))
+        .pipe(revReplace({ manifest: manifest_json, prefix: configObj.prefix }))
         .pipe(gulp.dest( "./dist/static" ) );
 
 });
@@ -145,33 +186,60 @@ gulp.task('set-main-rev', ['get-all-rev'], function() {
     var manifest_json = gulp.src("./dist/rev-manifest.json");
 
     return gulp.src(["./dist/main/*.js"])
-        .pipe(revReplace({ manifest: manifest_json, prefix:prefix  }))
+        .pipe(revReplace({ manifest: manifest_json, prefix: configObj.prefix  }))
         .pipe(gulp.dest( "./dist/main" ) );
 
 });
 
+var configObj = {
+    prefix: "",
+    isPhp: "",
+    baseurl: ""
+}
+exports.setConfig = function(obj){
+    configObj = obj;
+}
+var phptext = fs.readFileSync('./php.txt').toString();
 // 主构建
 gulp.task('main', ['set-static-rev', 'set-main-rev'], function() {
 
     var manifest_json = gulp.src("./dist/rev-manifest.json");
+    // console.log(configObj);
+    if (configObj.isPhp === "1") {
 
-    return gulp.src(["./src/index.html"])
+        return gulp.src(["./src/index.html"])
+            // 调试状态
+            .pipe(replace(/IS_DEGUG = true/, "IS_DEGUG = false"))
+            .pipe(replace(/baseUrl: \"\"/, "baseUrl: \"" + configObj.baseurl + "\""))
+            .pipe(htmlInline({ minifyCss: true, minifyJs: true, ignore: 'ignore' })) // 放在html上面
+            .pipe(revReplace({ manifest: manifest_json, prefix: configObj.prefix  }))
+            .pipe(minifyHTML({ empty: true }))
 
-        // 调试状态
-        .pipe(replace(/IS_DEGUG = true/, "IS_DEGUG = false"))
+            .pipe(rename(function (path) {
+                path.basename = "index";
+                path.extname = ".php";
+            }))
+            .pipe(replace(/^/, phptext))
+            .pipe(gulp.dest( "./dist" ) );
 
-        .pipe(htmlInline({ minifyCss: true, minifyJs: true, ignore: 'ignore' })) // 放在html上面
-        .pipe(revReplace({ manifest: manifest_json, prefix:prefix  }))
-        .pipe(minifyHTML({ empty: true }))
-        .pipe(gulp.dest( "./dist" ) );
+    } else {
+        return gulp.src(["./src/index.html"])
+            .pipe(replace(/IS_DEGUG = true/, "IS_DEGUG = false"))
+            .pipe(replace(/baseUrl: \"\"/, "baseUrl: \"" + configObj.baseurl + "\""))
+            .pipe(htmlInline({ minifyCss: true, minifyJs: true, ignore: 'ignore' })) // 放在html上面
+            .pipe(revReplace({ manifest: manifest_json, prefix: configObj.prefix  }))
+            .pipe(minifyHTML({ empty: true }))
+            .pipe(gulp.dest( "./dist" ) );
+    }
+
 
 
 });
 
 // 专题复制
 gulp.task('topic', ['clean'], function(){
-    return gulp.src(["./src/topic/**/*"])
-        .pipe(gulp.dest( "./dist/topic" ) );
+    // return gulp.src(["./src/topic/**/*"])
+        // .pipe(gulp.dest( "./dist/topic" ) );
 });
 
 // 最后的清除
@@ -186,25 +254,32 @@ gulp.task('default', ['last']);
 
 
 // 编译sass
+var sasserrortimes = 1;
 gulp.task('sass', function () {
   gulp.src('./src/static/sass/*.scss')
-    .pipe(sass().on('error', sass.logError))
+    .pipe(sass().on('error', function(err){
+        console.error("-------sass---start-------");
+        console.error("错误叠加编码：" + sasserrortimes++);
+        console.error('compile sass file error: %s', err.message);
+        console.error("-------sass---end-------");
+        console.error("    ");
+        // sass.logError();
+    }))
     .pipe(gulp.dest('./src/static'));
 });
 gulp.task('sass:watch', function () {
   gulp.watch('./src/static/sass/**/*.scss', ['sass']);
 });
 
-exports.setPrefix = function(name){
-    prefix = name;
-}
+
+
 exports.getGulp = function(){
     return gulp;
 }
 
 
 // 自定义的文件结构
-function getAmdFiles(root) {
+function getAmdPagesFiles(root) {
 
     // "text!./pages/home/index.html",
     // "./pages/home/index",
@@ -221,7 +296,7 @@ function getAmdFiles(root) {
             };
             res.push(pathname);
         } else {
-            res = res.concat(getAmdFiles(pathname));
+            res = res.concat(getAmdPagesFiles(pathname));
         }
     });
     return res;

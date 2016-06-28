@@ -6,7 +6,7 @@
 * @author: she
 */
 
-define([ "./plugins/vue/vue" ],
+define([ "vue_plugins" ],
     function ( Vue ) {
     "use strict";
 

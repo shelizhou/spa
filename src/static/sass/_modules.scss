@@ -1,43 +1,76 @@
 @charset "utf-8";
 
 // 常用模块
-.m_box {@include box();}
-.m_box_v { @include box(v);}
-.m_flex1 { @include flex();}
-.m_over { @include overflowY();}
-.m_text { @include textOverflow();}
+.m_top20 {margin-top: rem($blockJianju);}
+.m_cred { color: $fontColorRed !important;}
+.m_cgreen { color:$mainColor !important;}
+.m_active_op_active {opacity: 0.7;}
+.m_active_bgw_active {background-color: #ECECEC !important;}
+.m_active_bgg_active {background-color: rgba(0, 0, 0, 0.26) !important;}
 
 // 弹出提示
 .m_tooltips {
-    color: #E4E4E4; position: absolute; top: 0; left: 0; right:0; z-index: 499;
-    @include transform( translateY(-110%) );
-    @include transition(all 0.3s ease-in-out);
-    @include boxalign(x);
+    color: #E4E4E4; position: absolute; top: 0; left: 0; right:0; z-index: 2;
+
     .tooltip-text {
-        max-width:80%;word-break:break-all; margin-top:rem(20);
+        word-break:break-all; margin-top:rem(20);
         background-color: rgba(0, 0, 0, 0.7); text-align: center; padding: rem(15) rem(30); border-radius: rem(10);
     }
-    &.on {@include transform( translateY(0%) );}
-}
+    &.down {
+        @include transform( translateY(-110%) );
+        @include transition(all 0.2s ease-in-out);
+        // @include boxalign(x);
+        left:50%; right: auto;
+        .tooltip-text {@include transform( translateX(-50%) );}
+        &.on {@include transform( translateY(0%) );}
+    }
 
+    // 弹出提示 居中
+    &.full {
+        // background: rgba(0,0,0,0.5);
+        // position: absolute;left: 0;right: 0;bottom: 0;top: 0;
+        position: static;
+        @include transition(all 0.2s ease-in-out); opacity: 0;
+        .tooltip-text {font-size: 14px;}
+        .tooltip-content{
+            @include transalign(); display: table;z-index: 2;
+            background: #606262;padding:7px 25px;line-height: 1.5;
+            max-width:60%;margin: auto;color:#fff;border-radius: rem(10);text-align: center;
+            vertical-align: middle;
+        }
+        &.on { opacity: 1; }
+    }
+}
 
 /*上下拉*/
 .m_topDom {
-    text-align: center;color: #000;text-align:center;overflow: hidden;
+    text-align: center;color: #000;text-align:center;overflow: hidden;line-height: 45px;
 	height:0px;@include transform( translateZ(0) ); @include transition( all 0.3s ease-in );
-    &.on { height:rem(90); }
+    &.on { height:45px; }
 }
 .m_downDom {
-	text-align: center;color: #000;text-align:center; height:60px;
-	&_text {line-height:rem(60); display:inline-block;color:#A7A7A7; }
+	text-align: center;color: #000;text-align:center; height:45px;line-height:45px;color:$fontColorThin;
+	&_text {line-height:45px; display:inline-block;vertical-align: middle; }
+    &_logo {
+        @extend %iconfont; display: inline-block;vertical-align: middle; margin-right: 5px;
+        &:before {content: "\e601";}
+    }
 	// &_logo {display:inline-block;margin-bottom: 6px;display:inline-block; background: url(images/loading.gif) center center no-repeat; width:60px;height:60px; background-size: 75px;    vertical-align: middle;  }
-	// &_loading {}
-	// &_reload {}
+	&_loading {
+        .m_downDom_logo {
+            @include animation(rotate 1.25s forwards linear 0s infinite normal);
+            // @include transformOrigin(5px 5px);
+            &:before {content: "\e65d";}
+        }
+    }
+	&_reload {
+        .m_downDom_logo:before {content:"\e662";}
+    }
 }
 
 // 蒙板
 .m_mask {
-    position: absolute;top:0;left:0;bottom:0;right:0;
+    position: absolute;top:0;left:0;bottom:0;right:0;z-index: 2;
     background: rgba(0, 0, 0, 0.3);
     display:none;  overflow: hidden;
     &.on {display:block;}
@@ -47,53 +80,66 @@
 @if $dialog {
     .m_boundingBox {
         // 基本
-        width:80%; overflow: hidden; background: #fff;border-radius: rem(16);
-        margin: rem(400) auto 0;
-        display:none;
-        &.on {
-            display:block;
-            @include animation(dialoginter 0.2s forwards linear 0s 1 normal);
-        }
-        .header {border-bottom: 2px solid #F0F0F0;padding: 0.3rem;}
-        .body {min-height: 60px;}
-        .footer {
-            @include box();
+        &.m_boundingBoxCenter {
+            display:none;overflow: hidden;
+            &.on {
+                // display:block;
+                position:absolute;top:0;bottom:0;left:0;right:0;z-index: 3;
+                @include boxalign();
+                @include animation(dialoginter 0.2s forwards linear 0s 1 normal);
+            }
+            .m_boundingBox_inner {
+                width:260px;background: #fff;border-radius: rem(16);color:$fontColorThin;overflow: hidden;
+            }
+            .header, .body {
+                text-align: center; font-size:15px;
+                margin:0 15px;color:rgb(39,39,39);
+            }
+            .header {padding:27px 10px;}
+            .body {padding:0px 10px 20px;}
+            .footer {
+                text-align: center;
+                @include box();
+            }
+
+            .btn {
+                text-align: center; color: rgb(102,102,102); padding:0px;width: 0; line-height: 40px;height: 40px;font-size:16px;
+                @include flex(1); @include box-sizing(border-box);border-top: $borderThin;border-right: $borderThin;
+                // &:active, &.on {background: rgba(0, 0, 0, 0.16);}
+                // @include transition(all 0.05s ease-in);
+                &:last-child {border-right: none;}
+                &.green {
+                    color: #fff; background: #51c23e;border-color:#51c23e;
+                    &.m_active_bgw_active {background-color: #31B51B !important;border-color:#31B51B;}
+                }
+            }
+
         }
 
-        .btn {
-            display: block;text-align: center;line-height:rem(90); color: #0ae;
-            @include flex(1);
-            border-right: 2px solid #F0F0F0;
-            border-top: 2px solid #F0F0F0;
-            &:last-child {border-right: none;}
-            @include box-sizing(border-box);
-            &:active, &.on {background: rgba(0, 0, 0, 0.16);}
-            @include transition(all 0.05s ease-in);
-            &.red { color: #F53E3E; }
-            &.close { color:#333333; }
-        }
 
         // 其他
-        &.down {
-            margin:rem(10); position: absolute;width: 100%;
-            bottom:0px;left:0px;right:0px;display:block;top: auto;background:none;
-            @include transition(all 0.3s ease-in);
-            @include transform(translate(0,120%));
+        &.m_boundingBoxDown {
+            position: absolute; bottom:0px;left:0px;right:0px;top: auto;z-index: 3;text-align: center;
+            @include transition(all 0.3s ease);
+            @include transform(translate3d(0,110%,0));
+            .m_boundingBox_inner {background: #f4f5f9;}
             &.on {
-                @include transform(translate(0,0%));
-                @include animation(none);
+                // display: block;
+                @include transform(translate3d(0,0,0));
             }
-            .header {text-align: center;background: #f1f2f4;}
-            .footer {
-                @include box(v);
+            .header, .body {
+                background: #fff;color: $fontColorRed;border-bottom: $border;height: 55px;line-height: 55px;    font-size: 14px;
             }
+            .footer { }
             .btn {
-                border-bottom: 1px solid #b2b2b2;
-                border-top:none;
-                border-right:none;
-                background: #FDFEFF;
-                &:active, &.on {background: #DADADA;}
-                &.close { margin-top:0.05rem; }
+                border-bottom: $border;line-height: 45px;background: #fff; font-size: 18px;
+                &:last-child {border-bottom: none;}
+                &.close {margin-top:10px;}
+                &.disabled {
+                    color: #ccc;
+                    &.m_active_bgw_active {background: #fff !important;}
+                }
+                // &:active, &.on {background: #DADADA;}
             }
         }
 

@@ -4,7 +4,8 @@
 
 * 宽高度：750px * 1254px（ip6 plus大小）
 
-* 采用rem布局，所有的大小都不能用px值（除了字体大小)，页面宽度分为10个rem
+* 采用rem布局，页面宽度分为10个rem
+    * 头部、底部、固定高度、按钮等采用px值，字体也采用px(标准为14px)
 
 * 扁平化设计，采用iconfont，少用图片
 
@@ -32,7 +33,6 @@
 * main.scss 所有其它的样式
 
 * _base.scss reset样式
-    - 以*m_*开头
 
 * _config.scss 配置变量
 
@@ -87,7 +87,7 @@
 
 * .fl .fr 浮动
 
-* .m\_box .m\_box\_v .m\_flex1
+* .m\_box .m\_box\_v .m\_flex1 .m\_box\_df .m\_boxcenter
 
 * .m_over 垂直滚动
 

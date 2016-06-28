@@ -6,8 +6,8 @@
  * @author: she
  */
 
-define(["hammer"],
-    function(Hammer) {
+define(["method"],
+    function(METHOD) {
         "use strict";
 
         function Initscroll(obj) {
@@ -101,29 +101,13 @@ define(["hammer"],
             });
             var pandown = false;
             if (obj.refreshFlag) {
-                // $(obj.ele).on("touchmove", function(e){
-                //     if (obj.ele.scrollTop <= 0) { // e.preventDefault(); }
-                // });
-                new Hammer(obj.ele).on("pandown", function(e) {
-                    // e.preventDefault();
-                    if (obj.ele.scrollTop > 0 || pandown) return;
-                    // console.log(e.distance);
-                    if (e.distance > 100) {
-                        pandown = true;
-                        topDomAction.show();
-                        obj.inner.html("");
-                        setTimeout(function () {
-                            pandown = false;
-                            next(1);
-                        }, 200);
-                    }
+                METHOD.touchEvent( $(obj.ele), "swipeDown", function(){
+                    if (obj.ele.scrollTop > 0) return;
+                    topDomAction.show();
+                    setTimeout(function () {
+                        next(1);
+                    }, 200);
                 });
-
-                // $topDom.on("webkitTransitionEnd", function() {
-                //     pandown = false;
-                //     next(1);
-                // });
-
             }
 
 
@@ -172,17 +156,16 @@ define(["hammer"],
 
             // 成功处理：接收html和页码，处理当前页的状态
             _this.success = function(html, allpage) {
-                    page < allpage ? _loadingEnd() : _last(allpage);
+                page < allpage ? _loadingEnd() : _last(allpage);
 
-                    obj.inner.append(html);
+                obj.inner.append(html);
 
-                    // 当页不够满时， 还有下一页时加载下一页
-                    // if ((ele_childDom.clientHeight - 60 < obj.ele.clientHeight) && (page < allpage)) {
-                    //     next(++page);
-                    // }
-
-                }
-                // 加载第一页
+                // 当页不够满时， 还有下一页时加载下一页
+                // if ((ele_childDom.clientHeight - 60 < obj.ele.clientHeight) && (page < allpage)) {
+                //     next(++page);
+                // }
+            }
+            // 加载第一页
             _this.load = function() {
                 next(1);
                 obj.ele.scrollTop = 0;

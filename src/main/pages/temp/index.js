@@ -1,5 +1,5 @@
-define([ 'config', 'method', 'modules', 'vue', 'template', 'sheSlide', 'kload'],
-    function ( CONFIG, METHOD, Modules, Vue, Template, SheSlide, Kload) {
+define([ 'config', 'method', 'modules', 'vue', 'sheSlide', 'kload'],
+    function ( CONFIG, METHOD, Modules, Vue, SheSlide, Kload) {
     "use strict";
 
 
@@ -50,7 +50,7 @@ define([ 'config', 'method', 'modules', 'vue', 'template', 'sheSlide', 'kload'],
             Modules.Tab({
                 sel: $(".J_tab", $p),
                 callback: function(i) {
-                    console.log(i);
+                    // console.log(i);
                 }
             });
 
@@ -79,6 +79,41 @@ define([ 'config', 'method', 'modules', 'vue', 'template', 'sheSlide', 'kload'],
 
             // METHOD.ajax("_ajax/pdTag/getTags.do").done(function(json){
             //     console.log(json);
+            // });
+
+            // Mobiscroll(".J_date", $p).mobiscroll({
+            //     preset: "date",
+            //     theme: "android-ics light", //light
+            //     mode: "scroller",
+            //     display: "bottom", //modal
+            //     lang: "zh",
+            //     dateFormat: 'yyyy-mm-dd',
+            //     dateOrder: 'yyyymmdd',
+            //     // timeFormat: 'HH:ii',
+            //     // dayText: '日', monthText: '月', yearText: '年',
+            //     setText: '确定',
+            //     cancelText: '取消',
+            //     height: 45,
+            //     headerText: "请选择",
+            //     onSelect: function(textDate, inst) {
+            //
+            //         Modules.cvar.personal.get().done(function(res){
+            //             METHOD.ajax("ctl=members&act=edit_user", {
+            //                 name: res.data.info.name,
+            //                 birth: textDate,
+            //                 sex: METHOD.changeSex(res.data.info.sex)
+            //             }, {type:"post"}).done(function(json){
+            //                 // METHOD.alert("修改成功");
+            //                 // console.log(json.data);
+            //                 Modules.cvar.personal.fire(json.data);
+            //             }).fail(function(){
+            //                 METHOD.alert("修改失败");
+            //             });
+            //         });
+            //
+            //     },
+            //     onChange: function(text){
+            //     }
             // });
         },
         active : function($p, parms){

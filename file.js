@@ -9,6 +9,8 @@ var FS = require("fs"),
 
 var proxy = HTTPPROXY.createProxyServer({});
 
+exports.proxyUrl = "http://new.15fen.com";
+
 exports.init = function(serverport, filename) {
     var server = HTTP.createServer(function(req, res) {
 
@@ -79,11 +81,9 @@ exports.init = function(serverport, filename) {
                     }
 
                     FS.readFile(pathname, function(err, data) {
-                        // var str = "";
-                        str = "<link rel='stylesheet' href='md/css.css'> <script src='md/js.js'></script>";
                         if (isMarkdown) {
                             try {
-                                res.end(MARKDOWN.toHTML(data.toString()) + str);
+                                res.end( "<meta charset='UTF-8'><link rel='stylesheet' href='md/css.css'>" + MARKDOWN.toHTML(data.toString()) + "<script src='md/js.js'></script>");
                             } catch (e) {
                                 console.log(e);
                                 res.end(data);
@@ -104,6 +104,10 @@ exports.init = function(serverport, filename) {
         // 反向代理
         if (req.url.indexOf('/_ajax') !== -1) {
             req.url = req.url.substring(6);
+
+            var urlObj = URL.parse(exports.proxyUrl);
+            req.headers['host'] = urlObj.host;
+            req.headers['url'] = urlObj.href;
             try {
                 proxy.web(req, res, {
                     target: exports.proxyUrl
@@ -117,5 +121,3 @@ exports.init = function(serverport, filename) {
     return server;
 
 }
-
-exports.proxyUrl = "http://show.bingosoft.net";
