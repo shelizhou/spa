@@ -52,7 +52,7 @@ define([],function ( ) {
             $menu_li.filter("[data-page='"+ obj.isMenu +"']")
                 .addClass("on");
 
-            document.title = obj.title;
+            // document.title = obj.title;
 
         });
         GLOBAL_MESS.emmit.on("deactive", function(){
