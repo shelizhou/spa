@@ -1,4 +1,10 @@
-
+/*
+* @name: 初始化
+* @overview:
+* @required: null
+* @return: obj [description]
+* @author: she
+*/
 
 define([],function ( ) {
     "use strict";
@@ -30,6 +36,7 @@ define([],function ( ) {
 
 
         // 页面控制
+
         GLOBAL_MESS.emmit.on("init", function(obj){
             // console.log("init");
         });
@@ -44,6 +51,8 @@ define([],function ( ) {
 
             $menu_li.filter("[data-page='"+ obj.isMenu +"']")
                 .addClass("on");
+
+            document.title = obj.title;
 
         });
         GLOBAL_MESS.emmit.on("deactive", function(){

@@ -94,7 +94,7 @@ define([ ],
                 clearLashDom(doHadloadArr(hash));
                 doPage(hadLoadObj[hash], hashObj, $prev, hash);
             }, function(err){
-                console.dir(err);
+                console.error(err);
                 // alert("加载错误");
             });
         } else {

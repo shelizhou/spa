@@ -1,13 +1,5 @@
 @charset "utf-8";
 
-// 常用模块
-.m_top20 {margin-top: rem($blockJianju);}
-.m_cred { color: $fontColorRed !important;}
-.m_cgreen { color:$mainColor !important;}
-.m_active_op_active {opacity: 0.7;}
-.m_active_bgw_active {background-color: #ECECEC !important;}
-.m_active_bgg_active {background-color: rgba(0, 0, 0, 0.26) !important;}
-
 // 弹出提示
 .m_tooltips {
     color: #E4E4E4; position: absolute; top: 0; left: 0; right:0; z-index: 2;

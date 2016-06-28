@@ -147,6 +147,21 @@ input::-webkit-search-cancel-button {
   display: -webkit-flex;
   display: flex; }
 
+.m_cred {
+  color: #fc6667 !important; }
+
+.m_cgreen {
+  color: #62c052 !important; }
+
+.m_active_op_active {
+  opacity: 0.7; }
+
+.m_active_bgw_active {
+  background-color: #ECECEC !important; }
+
+.m_active_bgg_active {
+  background-color: rgba(0, 0, 0, 0.26) !important; }
+
 html {
   position: relative;
   max-width: 480px;
