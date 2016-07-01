@@ -143,13 +143,13 @@ define([ ],
             obj.dom.html(obj.html);
             $pages.append(obj.dom);
             transPage($prev, obj.dom);
-            obj.js.init && obj.js.init(obj.dom, hashObj.parm);
             GLOBAL_MESS.emmit && GLOBAL_MESS.emmit.fire("init", hashObj.con);
+            obj.js.init && obj.js.init(obj.dom, hashObj.parm);
         } else {
             transPage($prev, obj.dom);
         }
-        obj.js.active && obj.js.active(obj.dom, hashObj.parm);
         GLOBAL_MESS.emmit && GLOBAL_MESS.emmit.fire("active", hashObj.con);
+        obj.js.active && obj.js.active(obj.dom, hashObj.parm);
 
     }
 
