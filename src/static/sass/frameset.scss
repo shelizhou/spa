@@ -13,9 +13,10 @@
 .m_boxcenter {@include boxalign();}
 .m_cred { color: $fontColorRed !important;}
 .m_cgreen { color:$mainColor !important;}
-.m_active_op_active {opacity: 0.7;}
-.m_active_bgw_active {background-color: #ECECEC !important;}
-.m_active_bgg_active {background-color: rgba(0, 0, 0, 0.26) !important;}
+.m_active {
+    background-color: #f6f6f6 !important;
+    &.op {opacity: 0.7;background-color: transparent !important;}
+}
 
 html { position: relative; max-width: 480px; height: 100%; margin: auto;background: #fff;}
 .s_wrap {position:absolute;top:0px;bottom:0px;left:0px;right:0px;overflow:hidden;}
