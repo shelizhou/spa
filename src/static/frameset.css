@@ -84,23 +84,6 @@ input::-webkit-search-cancel-button {
 .fl {
   float: left; }
 
-/**
- * 首页模块
- */
-.p_index {
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px; }
-  .p_index .list li {
-    line-height: 1.06667rem;
-    color: #615A5A; }
-  .p_index .list li:active {
-    background: #fff; }
-  .p_index .list li:not(:last-child) {
-    border-bottom: 1px solid #ccc; }
-
 .m_box {
   display: box;
   display: -webkit-box;
@@ -153,14 +136,11 @@ input::-webkit-search-cancel-button {
 .m_cgreen {
   color: #62c052 !important; }
 
-.m_active_op_active {
-  opacity: 0.7; }
-
-.m_active_bgw_active {
-  background-color: #ECECEC !important; }
-
-.m_active_bgg_active {
-  background-color: rgba(0, 0, 0, 0.26) !important; }
+.m_active {
+  background-color: #f6f6f6 !important; }
+  .m_active.op {
+    opacity: 0.7;
+    background-color: transparent !important; }
 
 html {
   position: relative;

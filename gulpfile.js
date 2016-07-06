@@ -80,6 +80,7 @@ gulp.task('rjs', ['copymain'], function() {
             text : "../../src/static/js/require/text",
             // 以下可能会变动
             kload : "kload",
+            init : "common/init",
             config : "common/config",
             method : "common/method",
             modules : "common/modules",

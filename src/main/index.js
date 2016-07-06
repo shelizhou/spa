@@ -6,6 +6,7 @@ require.config({
         text : "../static/js/require/text",
 
         kload : "kload",
+        init : "common/init",
         config : "common/config",
         method : "common/method",
         modules : "common/modules",

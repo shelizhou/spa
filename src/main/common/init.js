@@ -6,7 +6,7 @@
 * @author: she
 */
 
-define([],function ( ) {
+define(['kload', 'config'],function ( Kload, CONFIG) {
     "use strict";
 
     var $wrap = $("#J__wrap"),
@@ -15,6 +15,18 @@ define([],function ( ) {
 
     function init() {
 
+        // 必须执行的桥梁
+        GLOBAL_MESS.emmit = CONFIG.emmit;
+
+        // 统一绑定跳转
+        $wrap.on("click", ".J__load", function(){
+            var page = $(this).attr("data-page");
+            if (page) {
+                Kload.load(page);
+            }
+        }).on("click", ".J__back", function(){
+            Kload.back();
+        });
 
         // 由于某些android手机还是对active 兼容有问题，固还是采用js兼容
         $wrap.on("touchstart", ".J__active", function(){
@@ -23,14 +35,11 @@ define([],function ( ) {
             $(this).removeClass("m_active");
         });
 
-
-
         // 页面控制
-
-        GLOBAL_MESS.emmit.on("init", function(obj){
+        CONFIG.emmit.on("init", function(obj){
             // console.log("init");
         });
-        GLOBAL_MESS.emmit.on("active", function(obj){
+        CONFIG.emmit.on("active", function(obj){
             // console.log("active");
             if (obj.isMenu) {
                 $menu.removeClass("none");
@@ -45,14 +54,15 @@ define([],function ( ) {
             // document.title = obj.title;
 
         });
-        GLOBAL_MESS.emmit.on("deactive", function(){
+        CONFIG.emmit.on("deactive", function(){
             // console.log("deactive");
         });
 
     }
 
+    init();
+
 
     return {
-        init : init
     };
 });

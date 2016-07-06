@@ -6,8 +6,8 @@
 * @author: she
 */
 
-define([ './common/init' ],
-    function ( Init ) {
+define([  ],
+    function (  ) {
     "use strict";
 
     var result = {};
@@ -100,8 +100,6 @@ define([ './common/init' ],
             }
         }
     })();
-    GLOBAL_MESS.emmit = result.emmit;
 
-    Init.init();
     return result;
 });

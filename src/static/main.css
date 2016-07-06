@@ -253,6 +253,91 @@
     transform: scale(1) translateZ(0);
     -webkit-transform: scale(1) translateZ(0); } }
 
+.m_slider {
+  position: relative;
+  overflow: hidden; }
+  .m_slider_main {
+    background: #ccc;
+    height: 4.37333rem; }
+    .m_slider_main img, .m_slider_main .m_bgimg {
+      width: 100%;
+      height: 4.37333rem;
+      display: block; }
+    .m_slider_main .m_bgimg.m_bglogo {
+      background-size: auto 40%; }
+  .m_slider_foot {
+    text-align: center;
+    position: absolute;
+    bottom: 0.4rem;
+    left: 0;
+    right: 0;
+    font-size: 0; }
+    .m_slider_foot li {
+      margin: 0 0.16rem;
+      display: inline-block;
+      background: #e3e3e3;
+      border-radius: 100%;
+      width: 0.2rem;
+      height: 0.2rem; }
+    .m_slider_foot li.on {
+      background: #62c052; }
+
+.m_button {
+  background: #62c052;
+  color: #fff;
+  text-align: center;
+  line-height: 39px;
+  height: 39px;
+  border-radius: 5px; }
+  .m_button i {
+    margin-right: 8px; }
+  .m_button.m_button_oneBottom {
+    margin: 0.26667rem 0.4rem; }
+  .m_button.small {
+    line-height: 25px;
+    height: 25px;
+    font-size: 13px; }
+  .m_button.inline {
+    padding: 0 1em;
+    display: inline-block; }
+  .m_button.red {
+    background: #EF4F4F; }
+  .m_button:active {
+    color: rgba(255, 255, 255, 0.4);
+    background-color: #4DA53F; }
+    .m_button:active.red {
+      background-color: #C13E3E; }
+    .m_button:active.disabled {
+      background-color: #bbb;
+      color: #fff; }
+  .m_button.redborder {
+    border: 1px solid #EF4F4F;
+    background: #fff;
+    color: #EF4F4F; }
+  .m_button.blackborder {
+    border: 1px solid #232323;
+    background: #fff;
+    color: #232323; }
+  .m_button.disabled {
+    background: #bbb; }
+    .m_button.disabled.redborder {
+      border: 1px solid #bbb;
+      color: #bbb;
+      background: none; }
+    .m_button.disabled.blackborder {
+      border: 1px solid #bbb;
+      color: #bbb;
+      background: none; }
+
+.m_bglogo {
+  background: #fff url(/static/img/logo_bg.png) center center no-repeat;
+  background-size: 40% auto; }
+
+.m_bgimg {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% 100%; }
+
 .dw {
   position: absolute;
   top: 5%;
@@ -2241,3 +2326,20 @@
   100% {
     transform: translate3d(0, 0, 0);
     -webkit-transform: translate3d(0, 0, 0); } }
+
+/**
+ * 首页模块
+ */
+.p_index {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px; }
+  .p_index .list li {
+    line-height: 1.06667rem;
+    color: #615A5A; }
+  .p_index .list li:active {
+    background: #fff; }
+  .p_index .list li:not(:last-child) {
+    border-bottom: 1px solid #ccc; }

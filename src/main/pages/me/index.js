@@ -1,5 +1,5 @@
-define([ 'config', 'method', 'defer', 'vue'],
-    function ( CONFIG, METHOD, Defer, Vue) {
+define([ 'init', 'config', 'method', 'defer', 'vue'],
+    function ( INIT, CONFIG, METHOD, Defer, Vue) {
     "use strict";
 
     return {

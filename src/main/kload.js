@@ -245,29 +245,15 @@ define([ ],
             $(window).on('hashchange', function(f) {
                 load();
             });
-            var me = this;
-            // 统一绑定跳转
-            $wrap.on("click", ".J__load", function(){
-                var page = $(this).attr("data-page"),
-                    wpage = $(this).attr("data-wp");
-
-                if (page) {
-                    // 表示是前进
-                    isLoadfont = true;
-                    me.load(page);
-                } else if (wpage) {
-                    window.location.href = wpage;
-                }
-
-            }).on("click", ".J__back", function(){
-                me.back();
-            });
+            
         },
         load: function(page) {
             if (!page || !_config.hashConfig[getHashObj(page).name]) {
                 alert("未定义");
                 return;
             } else {
+                // 表示是前进
+                isLoadfont = true;
                 window.location.hash = page;
             }
             // console.log(historyArr);
@@ -303,6 +289,11 @@ define([ ],
                 }, 300);
             }, 300);
 
+        },
+
+        // 重新刷页面跳转
+        loadSelf : function(hash) {
+            window.location.href = window.location.origin + window.location.pathname + "?_t=" + _trandom + "#" + hash;
         }
 
 

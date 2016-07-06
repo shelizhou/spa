@@ -1,5 +1,5 @@
-define([ 'config', 'method', 'modules', 'vue', 'sheSlide', 'kload', 'mobiscroll'],
-    function ( CONFIG, METHOD, Modules, Vue, SheSlide, Kload, Mobiscroll) {
+define([ 'init', 'config', 'method', 'modules', 'vue', 'sheSlide', 'kload', 'mobiscroll'],
+    function ( INIT, CONFIG, METHOD, Modules, Vue, SheSlide, Kload, Mobiscroll) {
     "use strict";
 
 

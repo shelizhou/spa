@@ -27,8 +27,13 @@ define(["method"],
             }
             obj.refreshFlag = (typeof obj.refreshFlag !== "undefined") ? obj.refreshFlag : false;
 
+            obj.lastText = obj.lastText || "最后一页";
+            obj.nodataText = obj.nodataText || "暂无数据";
+
+            var ele_childDom = obj.ele.children[0];
+            // console.log(ele_childDom);
             var
-            // 当前页码
+                // 当前页码
                 page = 1,
 
                 // 标志位，判断是否可以加载下一页
@@ -70,7 +75,7 @@ define(["method"],
                     },
                     last: function(nodate) {
                         $(downDom).removeClass("m_downDom_reload m_downDom_loading");
-                        downDom.children[1].innerHTML = nodate ? "暂无数据" : "最后一页";
+                        downDom.children[1].innerHTML = nodate ? obj.nodataText : obj.lastText;
                         obj.refreshFlag && topDomAction.hide();
                     },
                     error: function() {
@@ -99,15 +104,32 @@ define(["method"],
                     }
                 }
             });
-            var pandown = false;
+            // var pandown = false;
             if (obj.refreshFlag) {
+                // $(obj.ele).on("touchmove", function(e){
+                //     if (obj.ele.scrollTop <= 0) { // e.preventDefault(); }
+                // });
                 METHOD.touchEvent( $(obj.ele), "swipeDown", function(){
+
+                // new Hammer(obj.ele).on("pandown", function(e) {
+                    // e.preventDefault();
                     if (obj.ele.scrollTop > 0) return;
-                    topDomAction.show();
-                    setTimeout(function () {
-                        next(1);
-                    }, 200);
+                    // console.log(e.distance);
+                    // if (e.distance > 100) {
+                        // pandown = true;
+                        topDomAction.show();
+                        setTimeout(function () {
+                            // pandown = false;
+                            next(1);
+                        }, 200);
+                    // }
                 });
+
+                // $topDom.on("webkitTransitionEnd", function() {
+                //     pandown = false;
+                //     next(1);
+                // });
+
             }
 
 
@@ -155,15 +177,17 @@ define(["method"],
             }
 
             // 成功处理：接收html和页码，处理当前页的状态
-            _this.success = function(html, allpage) {
+            _this.success = function(allpage) {
+
                 page < allpage ? _loadingEnd() : _last(allpage);
 
-                obj.inner.append(html);
-
                 // 当页不够满时， 还有下一页时加载下一页
-                // if ((ele_childDom.clientHeight - 60 < obj.ele.clientHeight) && (page < allpage)) {
-                //     next(++page);
-                // }
+                if (!obj.notAutoLoad) {
+                    if ((ele_childDom.clientHeight - 60 < obj.ele.clientHeight) && (page < allpage)) {
+                        next(++page);
+                    }
+                }
+
             }
             // 加载第一页
             _this.load = function() {
@@ -179,6 +203,7 @@ define(["method"],
             downDom.appendChild(downDom_logo);
             downDom.appendChild(downDom_text);
             obj.ele.appendChild(downDom);
+            downDomAction.startLoading(); // 一开始loading
             if (obj.refreshFlag) {
                 $(obj.ele).prepend($topDom);
             }
