@@ -62,9 +62,10 @@ buildServer.on('request', function(req, res) {
                 GULP.setConfig({
                     prefix: info.text,
                     isPhp: info.isPhp,
-                    baseurl: info.baseurl
+                    baseurl: info.baseurl,
+                    distFile: info.distFile
                 });
-                GULP.getGulp().task('out_run', ['last'], function(){
+                GULP.getGulp().task('out_run', ['default'], function(){
                     console.log("构建成功");
                     res.end(JSON.stringify({ajaxtype:info.ajaxtype, success:true}));
                 });

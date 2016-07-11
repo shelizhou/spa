@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>构建平台</title>
+    <title>mobile构建平台</title>
     <style>
         * {margin: 0;padding:0;}
         .m_buttons {text-align: center;}
@@ -36,8 +36,8 @@
         <label><span>资源前缀(后面不用加/): </span><input id="J__gulptext" class="m_input" placeholder="默认是空" type="text" value=""></label>
         <label><span>api地址: </span><input id="J__gulpapi" class="m_input" placeholder="默认是空" type="text" value=""></label>
         <select id="J__select">
-            <option value="/new/mobile" isphp="1" baseurl="/new/mobile/api.php?">线上</option>
-            <option value="" isphp="0" baseurl="_ajax/mobile/api.php?">本机</option>
+            <option value="" isphp="0" data-file="./dist/" baseurl="/api/">本机</option>
+            <option value="/frontend_mobile/dist_online" isphp="0" data-file="./dist_online/" baseurl="/api/">线上</option>
         </select>
         <button class="m_button important" data-ajax="gulp">一键构建工程</button>
     </div>
@@ -87,15 +87,18 @@
             text = document.getElementById("J__gulptext");
 
         var isPhp,
+            distFile,
             baseurl;
         select.addEventListener("change", function(){
             text.value = select.value;
             isPhp = select[select.selectedIndex].getAttribute('isphp');
             api.value = select[select.selectedIndex].getAttribute('baseurl');
+            distFile = select[select.selectedIndex].getAttribute('data-file');
         });
         text.value = select.value;
         api.value = select[0].getAttribute('baseurl');
         isPhp = select[0].getAttribute('isphp');
+        distFile = select[0].getAttribute('data-file');
 
         for (var i = 0; i < buttons.length; i++) {
             buttons[i].addEventListener("click", function(){
@@ -115,7 +118,7 @@
                     tip.style.display = "block";
                     tip.innerHTML = "构建中...."
                 }
-                ajax({ajaxtype:ajaxtype, text: text.value, isPhp: isPhp, baseurl: api.value}, function(res){
+                ajax({ajaxtype:ajaxtype, text: text.value, isPhp: isPhp, baseurl: api.value, distFile: distFile}, function(res){
                     if (res.ajaxtype === "gulp" && res.success) {
                         tip.innerHTML = "构建成功";
                         tip.style.display = "none";

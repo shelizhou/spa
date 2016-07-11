@@ -41,10 +41,9 @@ var sass = require('gulp-sass');
 // 改名字
 var rename = require('gulp-rename');
 
-
 // 清除所有
 gulp.task('clean', function () {
-    return gulp.src( [ "./temp/", "./dist/" ])
+    return gulp.src( [ "./temp/", configObj.distFile ])
         .pipe(clean({force: true}));
 });
 
@@ -71,7 +70,8 @@ gulp.task('rjs', ['copymain'], function() {
     var commomArr = [
         'text', 'kload', 'fastclick',
         // 'md5',
-        'defer', 'sheSlide', 'vue_plugins',  'wx_plugins', 'mobiscroll'
+        'defer', 'sheSlide', 'vue_plugins',  'wx_plugins'
+        // , 'mobiscroll'
     ];
 
     return requirejs.optimize({
@@ -167,34 +167,35 @@ gulp.task('get-all-rev', ['clean', 'main-rjs-rev', 'concat'], function() {
         .pipe(gulpif("*.jpg", imagemin(imgOption)))
         .pipe(gulpif("*.css", minifyCss()))
         .pipe(gulpif("*.js", uglify()))
-        .pipe(gulp.dest("./dist"))
+        .pipe(gulp.dest(configObj.distFile))
         .pipe(rev.manifest())
-        .pipe(gulp.dest('./dist'));
+        .pipe(gulp.dest(configObj.distFile));
 
 });
 
 // 样式的md5
 gulp.task('set-static-rev', ['get-all-rev'], function() {
-    var manifest_json = gulp.src("./dist/rev-manifest.json");
+    var manifest_json = gulp.src(configObj.distFile + "rev-manifest.json");
 
-    return gulp.src(["./dist/static/*.css"])
+    return gulp.src([configObj.distFile + "static/*.css"])
         .pipe(revReplace({ manifest: manifest_json, prefix: configObj.prefix }))
-        .pipe(gulp.dest( "./dist/static" ) );
+        .pipe(gulp.dest( configObj.distFile + "static" ) );
 
 });
 // html或js的md5
 gulp.task('set-main-rev', ['get-all-rev'], function() {
-    var manifest_json = gulp.src("./dist/rev-manifest.json");
+    var manifest_json = gulp.src(configObj.distFile + "rev-manifest.json");
 
-    return gulp.src(["./dist/main/*.js"])
+    return gulp.src([configObj.distFile + "main/*.js"])
         .pipe(revReplace({ manifest: manifest_json, prefix: configObj.prefix  }))
-        .pipe(gulp.dest( "./dist/main" ) );
+        .pipe(gulp.dest( configObj.distFile + "main" ) );
 
 });
 
 var configObj = {
     prefix: "",
     isPhp: "",
+    distFile: "",
     baseurl: ""
 }
 exports.setConfig = function(obj){
@@ -204,7 +205,7 @@ var phptext = fs.readFileSync('./php.txt').toString();
 // 主构建
 gulp.task('main', ['set-static-rev', 'set-main-rev'], function() {
 
-    var manifest_json = gulp.src("./dist/rev-manifest.json");
+    var manifest_json = gulp.src(configObj.distFile + "rev-manifest.json");
     // console.log(configObj);
     if (configObj.isPhp === "1") {
 
@@ -221,7 +222,7 @@ gulp.task('main', ['set-static-rev', 'set-main-rev'], function() {
                 path.extname = ".php";
             }))
             .pipe(replace(/^/, phptext))
-            .pipe(gulp.dest( "./dist" ) );
+            .pipe(gulp.dest( configObj.distFile ) );
 
     } else {
         return gulp.src(["./src/index.html"])
@@ -230,7 +231,7 @@ gulp.task('main', ['set-static-rev', 'set-main-rev'], function() {
             .pipe(htmlInline({ minifyCss: true, minifyJs: true, ignore: 'ignore' })) // 放在html上面
             .pipe(revReplace({ manifest: manifest_json, prefix: configObj.prefix  }))
             .pipe(minifyHTML({ empty: true }))
-            .pipe(gulp.dest( "./dist" ) );
+            .pipe(gulp.dest( configObj.distFile ) );
     }
 
 
@@ -240,18 +241,22 @@ gulp.task('main', ['set-static-rev', 'set-main-rev'], function() {
 // 专题复制
 gulp.task('topic', ['clean'], function(){
     // return gulp.src(["./src/topic/**/*"])
-        // .pipe(gulp.dest( "./dist/topic" ) );
+        // .pipe(gulp.dest( configObj.distFile + "topic" ) );
 });
 
 // 最后的清除
 gulp.task('last', ['main', 'topic'], function() {
-    return gulp.src( [ "./temp/", "./dist/**/rev-manifest.json" ])
+    return gulp.src( [ "./temp/", configObj.distFile + "**/rev-manifest.json" ])
         .pipe(clean({force: true}));
 });
 
+gulp.task('lastCopy', ['last'], function(){
+    // return gulp.src([configObj.distFile + "**/*"])
+        // .pipe(gulp.dest( "../" ) );
+});
 
 // 默认任务
-gulp.task('default', ['last']);
+gulp.task('default', ['lastCopy']);
 
 
 // 编译sass
