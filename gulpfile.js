@@ -41,9 +41,6 @@ var sass = require('gulp-sass');
 // 改名字
 var rename = require('gulp-rename');
 
-//
-// var babel = require('gulp-babel');
-
 // 清除所有
 gulp.task('clean', function () {
     return gulp.src( [ "./temp/", configObj.distFile ])
@@ -127,9 +124,6 @@ gulp.task('main-rjs-rev-wait', ['rjs'], function() {
 gulp.task('main-rjs-rev', ['main-rjs-rev-wait'], function() {
 
     return gulp.src( ["./temp/dist/index.js", "./temp/dist/pages.js"])
-        // .pipe(babel({
-        //     compact: false
-        // }))
         .pipe(uglify())
         .pipe(gulp.dest("./temp/copy/main"));
 
