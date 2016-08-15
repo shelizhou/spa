@@ -2,7 +2,7 @@
 var FIlE = require('./file'),
     GULP = require('./gulpfile'),
     QUERYSTRING = require('querystring'),
-    PORT = parseInt(process.argv[2], 10) || 9090,
+    PORT = parseInt(process.argv[2], 10) || 7090,
     OS = require('os');
 
 // 打开浏览器

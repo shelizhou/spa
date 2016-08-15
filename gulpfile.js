@@ -41,6 +41,9 @@ var sass = require('gulp-sass');
 // 改名字
 var rename = require('gulp-rename');
 
+//
+// var babel = require('gulp-babel');
+
 // 清除所有
 gulp.task('clean', function () {
     return gulp.src( [ "./temp/", configObj.distFile ])
@@ -58,6 +61,9 @@ gulp.task('concat', function() {
 gulp.task('copymain', ['clean'], function() {
     return gulp.src( ["./src/main/**/*"] )
         .pipe(gulpif("*.html", minifyHTML({ empty: true })))
+        .pipe(gulpif("*.js", replace(/BASEURL = \".*\";/g, "BASEURL = \"" + configObj.baseurl + "\";")))
+        .pipe(gulpif("*.js", replace("var _dev = getQueryParms\('dev'\);", "")))
+        .pipe(gulpif("*.js", replace("if\(_dev\)\{option.data.dev=_dev;\}", "")))
         .pipe(gulp.dest("./temp/main"));
 });
 
@@ -121,6 +127,9 @@ gulp.task('main-rjs-rev-wait', ['rjs'], function() {
 gulp.task('main-rjs-rev', ['main-rjs-rev-wait'], function() {
 
     return gulp.src( ["./temp/dist/index.js", "./temp/dist/pages.js"])
+        // .pipe(babel({
+        //     compact: false
+        // }))
         .pipe(uglify())
         .pipe(gulp.dest("./temp/copy/main"));
 
@@ -194,46 +203,24 @@ gulp.task('set-main-rev', ['get-all-rev'], function() {
 
 var configObj = {
     prefix: "",
-    isPhp: "",
     distFile: "",
     baseurl: ""
 }
 exports.setConfig = function(obj){
     configObj = obj;
 }
-var phptext = fs.readFileSync('./php.txt').toString();
+
 // 主构建
 gulp.task('main', ['set-static-rev', 'set-main-rev'], function() {
 
     var manifest_json = gulp.src(configObj.distFile + "rev-manifest.json");
-    // console.log(configObj);
-    if (configObj.isPhp === "1") {
 
-        return gulp.src(["./src/index.html"])
-            // 调试状态
-            .pipe(replace(/IS_DEGUG = true/, "IS_DEGUG = false"))
-            .pipe(replace(/baseUrl: \"\"/, "baseUrl: \"" + configObj.baseurl + "\""))
-            .pipe(htmlInline({ minifyCss: true, minifyJs: true, ignore: 'ignore' })) // 放在html上面
-            .pipe(revReplace({ manifest: manifest_json, prefix: configObj.prefix  }))
-            .pipe(minifyHTML({ empty: true }))
-
-            .pipe(rename(function (path) {
-                path.basename = "index";
-                path.extname = ".php";
-            }))
-            .pipe(replace(/^/, phptext))
-            .pipe(gulp.dest( configObj.distFile ) );
-
-    } else {
-        return gulp.src(["./src/index.html"])
-            .pipe(replace(/IS_DEGUG = true/, "IS_DEGUG = false"))
-            .pipe(replace(/baseUrl: \"\"/, "baseUrl: \"" + configObj.baseurl + "\""))
-            .pipe(htmlInline({ minifyCss: true, minifyJs: true, ignore: 'ignore' })) // 放在html上面
-            .pipe(revReplace({ manifest: manifest_json, prefix: configObj.prefix  }))
-            .pipe(minifyHTML({ empty: true }))
-            .pipe(gulp.dest( configObj.distFile ) );
-    }
-
+    return gulp.src(["./src/index.html"])
+        .pipe(replace(/IS_DEGUG = true/, "IS_DEGUG = false"))
+        .pipe(htmlInline({ minifyCss: true, minifyJs: true, ignore: 'ignore' })) // 放在html上面
+        .pipe(revReplace({ manifest: manifest_json, prefix: configObj.prefix  }))
+        .pipe(minifyHTML({ empty: true }))
+        .pipe(gulp.dest( configObj.distFile ) );
 
 
 });

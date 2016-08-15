@@ -64,7 +64,7 @@ define(["method"],
                 // 处理底部dom
                 downDomAction = {
                     startLoading: function() {
-                        $(downDom).removeClass("m_downDom_reload");
+                        $(downDom).removeClass("m_downDom_reload m_downDom_end");
                         $(downDom).addClass("m_downDom_loading");
                         downDom.children[1].innerHTML = "正在加载，请稍后";
                     },
@@ -76,6 +76,7 @@ define(["method"],
                     last: function(nodate) {
                         $(downDom).removeClass("m_downDom_reload m_downDom_loading");
                         downDom.children[1].innerHTML = nodate ? obj.nodataText : obj.lastText;
+                        !nodate && $(downDom).addClass("m_downDom_end");
                         obj.refreshFlag && topDomAction.hide();
                     },
                     error: function() {
@@ -95,6 +96,7 @@ define(["method"],
 
             // 核心代码，滚动
             obj.ele.addEventListener("scroll", function(e) {
+                if (obj.notLoadFirst) return;
                 var tar = e.target;
                 // 滚到底部了
                 if (tar.scrollTop + tar.clientHeight >= (tar.scrollHeight - 10)) {
@@ -191,6 +193,7 @@ define(["method"],
             }
             // 加载第一页
             _this.load = function() {
+                obj.notLoadFirst = false;
                 next(1);
                 obj.ele.scrollTop = 0;
             }
@@ -202,7 +205,11 @@ define(["method"],
             $(downDom_text).addClass("m_downDom_text");
             downDom.appendChild(downDom_logo);
             downDom.appendChild(downDom_text);
-            obj.ele.appendChild(downDom);
+            if (obj.downinner) {
+                obj.downinner.get(0).appendChild(downDom);
+            } else {
+                obj.ele.appendChild(downDom);
+            }
             downDomAction.startLoading(); // 一开始loading
             if (obj.refreshFlag) {
                 $(obj.ele).prepend($topDom);

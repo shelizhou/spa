@@ -9,7 +9,6 @@ var FS = require("fs"),
 
 var proxy = HTTPPROXY.createProxyServer({});
 
-exports.proxyUrl = "http://new.15fen.com";
 
 exports.init = function(serverport, filename) {
     var server = HTTP.createServer(function(req, res) {
@@ -101,21 +100,6 @@ exports.init = function(serverport, filename) {
             });
         }
 
-        // 反向代理
-        if (req.url.indexOf('/_ajax') !== -1) {
-            req.url = req.url.substring(6);
-
-            var urlObj = URL.parse(exports.proxyUrl);
-            req.headers['host'] = urlObj.host;
-            req.headers['url'] = urlObj.href;
-            try {
-                proxy.web(req, res, {
-                    target: exports.proxyUrl
-                });
-            } catch (e) {
-                console.log(e);
-            }
-        }
     });
 
     return server;

@@ -101,7 +101,7 @@ define([], function () {
 			className = "";
 
 		for(; i < l; i++ ){
-			className = "btn m_active_bgw";
+			className = "btn J__active";
 			if(class4Btn && class4Btn[i]){
 				className += " " + class4Btn[i];
 			}
@@ -133,7 +133,7 @@ define([], function () {
 			// 遮罩层
 			if(this.cfg.hasMask) {
 				this._mask = $('<div class="m_mask"></div>');
-				this._mask.appendTo($container);
+				this._mask.prependTo(this.boundingBox);
 			}
 
 			// 关闭标题

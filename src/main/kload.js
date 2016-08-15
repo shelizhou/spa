@@ -236,6 +236,18 @@ define([ ],
         }
     }
 
+    var _trandom = (function(name) {
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return unescape(r[2]);
+        }
+        return null;
+    })('_t') || 0;
+
+    // 确保重刷的时候参数不一样
+    _trandom++;
+
 
     return {
         init : function(obj){
@@ -245,7 +257,7 @@ define([ ],
             $(window).on('hashchange', function(f) {
                 load();
             });
-            
+
         },
         load: function(page) {
             if (!page || !_config.hashConfig[getHashObj(page).name]) {
@@ -279,7 +291,6 @@ define([ ],
         // 先返回在goto
         backAndGo : function(n, page){
             var me = this;
-            // $loading.addClass("on");
             $wrap.addClass("none");
             me.back(n);
             setTimeout(function () {
@@ -291,9 +302,24 @@ define([ ],
 
         },
 
+        // 替换当页面的链接，不留记录
+        replaceGo : function(hash) {
+            window.location.replace(window.location.origin + window.location.pathname + "?_t=" + _trandom + "#" + hash);
+        },
+
         // 重新刷页面跳转
-        loadSelf : function(hash) {
+        loadRefreash : function(hash) {
             window.location.href = window.location.origin + window.location.pathname + "?_t=" + _trandom + "#" + hash;
+        },
+
+        // 重新刷页面跳转
+        backAndloadRefreash : function(n, hash) {
+            var me = this;
+            $wrap.addClass("none");
+            me.back(n);
+            setTimeout(function () {
+                window.location.href = window.location.origin + window.location.pathname + "?_t=" + _trandom + "#" + hash;
+            }, 300);
         }
 
 

@@ -16,6 +16,8 @@ define([  ],
     result.isWeChat = /micromessenger/.test(GLOBAL_MESS.ua.toLowerCase()) ? true : false;
     // 是android
     result.isAndroid = GLOBAL_MESS.ua.match(/Android/i) ? true : false;
+    // 是Safari
+    result.isSafari = GLOBAL_MESS.ua.match(/Safari/i) ? true : false;
 
     // 缓存永久字段 localStorage
     result.word = (function() {
@@ -57,6 +59,47 @@ define([  ],
             }
         }
     }());
+    result.session = (function() {
+        var w = {
+            // loginPage: "_aabldf1",  // 登录调整
+        };
+        return {
+            get: function(name) {
+                if (typeof w[name] === "undefined") {
+                    alert("请先存标志字段");
+                    return null;
+                }
+                return sessionStorage.getItem(w[name]);
+            },
+            set: function(name, val) {
+                if (typeof w[name] === "undefined") {
+                    alert("请先存标志字段");
+                    return;
+                }
+                sessionStorage.setItem(w[name], val);
+            },
+            remove: function(name) {
+                if (typeof w[name] === "undefined") {
+                    alert("请先存标志字段");
+                    return;
+                }
+                sessionStorage.removeItem(w[name]);
+            }
+        }
+    })();
+
+    // 是否支持缓存
+    result.isLocalStorageSupported = (function() {
+        var testKey = 'test',
+            storage = window.localStorage;
+        try {
+            storage.setItem(testKey, 'testValue');
+            storage.removeItem(testKey);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    })();
 
 
     // 注册事件
