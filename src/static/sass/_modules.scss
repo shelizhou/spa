@@ -69,16 +69,20 @@
 }
 
 // 弹出框
+// 弹出框
 @if $dialog {
     .m_boundingBox {
         // 基本
+        .m_mask {z-index: 0;}
         &.m_boundingBoxCenter {
-            display:none;overflow: hidden;
+            display:none;overflow: hidden;@include transform(translateZ(0));
             &.on {
                 // display:block;
                 position:absolute;top:0;bottom:0;left:0;right:0;z-index: 3;
                 @include boxalign();
-                @include animation(dialoginter 0.2s forwards linear 0s 1 normal);
+                .m_boundingBox_inner {
+                    @include animation(dialoginter 0.2s forwards linear 0s 1 normal);
+                }
             }
             .m_boundingBox_inner {
                 width:260px;background: #fff;border-radius: rem(16);color:$fontColorThin;overflow: hidden;
@@ -95,14 +99,13 @@
             }
 
             .btn {
-                text-align: center; color: rgb(102,102,102); padding:0px;width: 0; line-height: 40px;height: 40px;font-size:16px;
+                text-align: center;  padding:0px;width: 0; line-height: 40px;height: 40px;font-size:16px;
                 @include flex(1); @include box-sizing(border-box);border-top: $borderThin;border-right: $borderThin;
-                // &:active, &.on {background: rgba(0, 0, 0, 0.16);}
-                // @include transition(all 0.05s ease-in);
                 &:last-child {border-right: none;}
-                &.green {
-                    color: #fff; background: #51c23e;border-color:#51c23e;
-                    &.m_active_bgw_active {background-color: #31B51B !important;border-color:#31B51B;}
+                &.main {
+                    color: #f1a943;
+                    // color: #fff; background: #51c23e;border-color:#51c23e;
+                    // &.m_active_bgw_active {background-color: #31B51B !important;border-color:#31B51B;}
                 }
             }
 
@@ -128,7 +131,7 @@
                 &:last-child {border-bottom: none;}
                 &.close {margin-top:10px;}
                 &.disabled {
-                    color: #ccc;
+                    color: #bbb;
                     &.m_active_bgw_active {background: #fff !important;}
                 }
                 // &:active, &.on {background: #DADADA;}
