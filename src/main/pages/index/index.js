@@ -12,8 +12,6 @@ define([ 'init', 'config', 'method', 'defer', 'vue'],
 
                 }
             });
-            // let a = 3;
-            // console.log(a);
         },
         active : function($p, parms){
         },

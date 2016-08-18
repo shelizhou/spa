@@ -126,9 +126,14 @@
   .m_mask.on {
     display: block; }
 
+.m_boundingBox .m_mask {
+  z-index: 0; }
+
 .m_boundingBox.m_boundingBoxCenter {
   display: none;
-  overflow: hidden; }
+  overflow: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0); }
   .m_boundingBox.m_boundingBoxCenter.on {
     position: absolute;
     top: 0;
@@ -147,9 +152,10 @@
     display: -webkit-box;
     display: -ms-flexbox;
     display: -webkit-flex;
-    display: flex;
-    animation: dialoginter 0.2s forwards linear 0s 1 normal;
-    -webkit-animation: dialoginter 0.2s forwards linear 0s 1 normal; }
+    display: flex; }
+    .m_boundingBox.m_boundingBoxCenter.on .m_boundingBox_inner {
+      animation: dialoginter 0.2s forwards linear 0s 1 normal;
+      -webkit-animation: dialoginter 0.2s forwards linear 0s 1 normal; }
   .m_boundingBox.m_boundingBoxCenter .m_boundingBox_inner {
     width: 260px;
     background: #fff;
@@ -173,7 +179,6 @@
     -webkit-box-orient: horizontal; }
   .m_boundingBox.m_boundingBoxCenter .btn {
     text-align: center;
-    color: #666666;
     padding: 0px;
     width: 0;
     line-height: 40px;
@@ -187,13 +192,8 @@
     border-right: 1px solid #EFEFEF; }
     .m_boundingBox.m_boundingBoxCenter .btn:last-child {
       border-right: none; }
-    .m_boundingBox.m_boundingBoxCenter .btn.green {
-      color: #fff;
-      background: #51c23e;
-      border-color: #51c23e; }
-      .m_boundingBox.m_boundingBoxCenter .btn.green.m_active_bgw_active {
-        background-color: #31B51B !important;
-        border-color: #31B51B; }
+    .m_boundingBox.m_boundingBoxCenter .btn.main {
+      color: #f1a943; }
 
 .m_boundingBox.m_boundingBoxDown {
   position: absolute;
@@ -229,7 +229,7 @@
     .m_boundingBox.m_boundingBoxDown .btn.close {
       margin-top: 10px; }
     .m_boundingBox.m_boundingBoxDown .btn.disabled {
-      color: #ccc; }
+      color: #bbb; }
       .m_boundingBox.m_boundingBoxDown .btn.disabled.m_active_bgw_active {
         background: #fff !important; }
 
@@ -2330,16 +2330,3 @@
 /**
  * 首页模块
  */
-.p_index {
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px; }
-  .p_index .list li {
-    line-height: 1.06667rem;
-    color: #615A5A; }
-  .p_index .list li:active {
-    background: #fff; }
-  .p_index .list li:not(:last-child) {
-    border-bottom: 1px solid #ccc; }

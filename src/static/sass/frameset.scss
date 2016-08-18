@@ -76,20 +76,6 @@ html { position: relative; max-width: 480px; height: 100%; margin: auto;backgrou
     }
 }
 
-.s_header {
-    height:$topHeight;line-height: $topHeight;
-    background: $blockBg;border-bottom: $borderThin; text-align: center;box-sizing: border-box;color:$mainColor;
-    h2 {font-size: 18px;color:$fontColorBold;}
-    &_left, &_right {width: $topButtonSize;display: block;font-size: 20px;}
-    &_lbg {@include linearBGGradient(top, #72c366, #58bf46);color: #fff;border-bottom:none;h2 {color: #fff;} }
-    &_text {
-        text-align: center; font-size:18px; position: absolute;right:0;top:0;padding:0 0.8em;
-    }
-    &_more {
-        position:absolute;top:0;right:0;
-    }
-
-}
 
 .s_menu {
     position:absolute;bottom:0;left:0;right:0;background:#fafbfd;height: $bottomHeight;

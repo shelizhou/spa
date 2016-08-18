@@ -49,10 +49,15 @@ input, select, textarea {
   font-size: inherit; }
 
 a, a:hover {
-  color: #666; }
+  text-decoration: none; }
 
 input::-webkit-search-cancel-button {
   -webkit-appearance: none; }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0; }
 
 /*特别通用模块*/
 .clearfix:after {
@@ -241,39 +246,6 @@ html {
     opacity: 1;
     transform: scale(1) translateZ(0);
     -webkit-transform: scale(1) translateZ(0); } }
-
-.s_header {
-  height: 47px;
-  line-height: 47px;
-  background: #fff;
-  border-bottom: 1px solid #EFEFEF;
-  text-align: center;
-  box-sizing: border-box;
-  color: #62c052; }
-  .s_header h2 {
-    font-size: 18px;
-    color: #272727; }
-  .s_header_left, .s_header_right {
-    width: 45px;
-    display: block;
-    font-size: 20px; }
-  .s_header_lbg {
-    background-image: -webkit-linear-gradient(top, #72c366, #58bf46);
-    color: #fff;
-    border-bottom: none; }
-    .s_header_lbg h2 {
-      color: #fff; }
-  .s_header_text {
-    text-align: center;
-    font-size: 18px;
-    position: absolute;
-    right: 0;
-    top: 0;
-    padding: 0 0.8em; }
-  .s_header_more {
-    position: absolute;
-    top: 0;
-    right: 0; }
 
 .s_menu {
   position: absolute;
