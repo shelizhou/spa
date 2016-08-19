@@ -243,6 +243,21 @@ define(["config", "defer"],
             }
         }
 
+        var $body = $('body'),
+            _doc = document;
+        result.setTitle = function(title){
+            _doc.title = title;
+
+            // hack在微信等ios webview中无法修改document.title的情况
+            if (CONFIG.isWeChat && !CONFIG.isAndroid ) {
+                var $iframe = $('<iframe src="/favicon.ico" style="display:none;"></iframe>').on('load', function() {
+                    setTimeout(function() {
+                        $iframe.off('load').remove();
+                    }, 0);
+                }).appendTo($body);
+            }
+        }
+
 
         return result;
     });
