@@ -1,10 +1,12 @@
-define([ 'init', 'config', 'method', 'defer', 'vue'],
-    function ( INIT, CONFIG, METHOD, Defer, Vue) {
+define([ 'init', 'config', 'method', 'defer', 'vue', 'modules', 'kload'],
+    function ( INIT, CONFIG, METHOD, Defer, Vue, Modules, Kload) {
     "use strict";
+
+    var _vm;
 
     return {
         init : function($p, parms){
-            new Vue({
+            _vm = new Vue({
                 el: $p.get(0),
                 data: {
                 },
